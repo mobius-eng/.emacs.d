@@ -1,6 +1,6 @@
 ;;; Setting for ORG mode
 (require 'org)
-(require 'org-latex)
+;; (require 'org-latex) -- does not exist?
 (require 'ox-latex)
 
 (add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when
@@ -230,6 +230,7 @@ of code to whatever theme I'm using's background"
 (setq org-latex-listings 'minted)
 ;; Common Lisp support for minted
 (add-to-list 'org-latex-minted-langs '(lisp "common-lisp"))
+(add-to-list 'org-latex-minted-langs '(emacs-lisp "common-lisp"))
 ;; Use imagemagic to create formulas (since we use PDF output)
 (setq org-latex-create-formula-image-program 'imagemagick)
 

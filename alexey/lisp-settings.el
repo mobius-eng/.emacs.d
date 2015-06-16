@@ -11,7 +11,7 @@
 
 ;; in theory, SLIME can support multiple implementations
 ;; in practice: only one at the time
-(load (expand-file-name "~/.sbcl-quicklisp/slime-helper.el"))
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; (load (expand-file-name "~/.ccl-quicklisp/slime-helper.el"))
 
 ;;; Autocomplete

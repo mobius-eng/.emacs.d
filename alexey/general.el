@@ -1,12 +1,16 @@
 ;; * General settings for Emacs
 ;; Text auto-fill
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
-(setq fill-column 75)
+(setq fill-column 80)
 ;; Something to do with autofill...
 (add-hook 'text-mode-hook 'text-mode-hook-identify)
 ;; Disable toolbar and menu-bar
+;; On macs: keep menu bar
+(setq is-mac (equal system-type 'darwin))
 (tool-bar-mode 0)
-(menu-bar-mode 0)
+(if is-mac
+    (menu-bar-mode 1)
+  (menu-bar-mode 0))
 ;; Disable visual feedback on selection
 (transient-mark-mode 0)
 ;; improve the title
@@ -14,7 +18,8 @@
 ;; show matching parentheses
 (show-paren-mode t)
 ;; font setting
-(set-default-font "DejaVu Sans Mono 9")
+;; (set-default-font "DejaVu Sans Mono 9")
+(set-default-font "InputMonoNarrow 12")
 ;; Some fonts might require extra spacing, uncomment if necessary
 ;; (setq-default line-spacing 3)
 ;; On some platforms it is not home...
@@ -50,6 +55,7 @@
         starter-kit-eshell
         starter-kit-lisp
         auctex
+        cdlatex
         magit
         auto-complete
         auto-complete-pcmp
@@ -79,19 +85,16 @@
         smex
         smyx-theme
         w3m
+        smooth-scrolling
         smart-mode-line
-        smart-mode-line-powerline-theme))
+        smart-mode-line-powerline-theme
+        material-theme))
 
 ;; install the missing packages
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
 
-;; Mac specific
-(setq is-mac (equal system-type 'darwin))
-(when is-mac
-  (require 'exec-path-from-shell)
-  (exec-path-from-shell-initialize))
 ;; Paredit settings:
 (require 'paredit)
 ;; sometimes these keys do not work out of the box
@@ -129,3 +132,16 @@
 ;; smart-mode-line (powerline)
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
+(sml/apply-theme 'dark)
+;; (sml/customize )
+;; remove magit warning
+(setq magit-last-seen-setup-instructions "1.4.0")
+
+;; Mac specific
+(when is-mac
+  (require 'exec-path-from-shell)
+  (exec-path-from-shell-initialize))
+(tool-bar-mode 0)
+(if is-mac
+    (menu-bar-mode 1)
+  (menu-bar-mode 0))

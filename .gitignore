@@ -4,3 +4,11 @@ backups/*
 elpa/*
 places
 .smex-items
+eshell/
+abbrev_defs
+ido.last
+quack.el
+recentf
+replace-colorthemes/*
+srecode-map.el
+tramp
