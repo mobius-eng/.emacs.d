@@ -3,8 +3,7 @@
 (setq slime-lisp-implementations
       '((sbcl ("sbcl") :coding-system utf-8-unix)
         (ccl ("ccl64"
-              "-K" "utf-8"))
-        ))
+              "-K" "utf-8"))))
 ;; Might work with slime, but still didn't figure out how
 ;; perhabs the support is outdated...
 ;; (mit-scheme ("mit-scheme") :init mit-scheme-init)
@@ -52,7 +51,10 @@
 
 
 ;; Local HyperSpec
-(setq common-lisp-hyperspec-root "file:/home/alexey/Dropbox/References/Programming/Lisp/HyperSpec-7-0/HyperSpec/")
+(setq common-lisp-hyperspec-root
+      (concat "file:"
+              (expand-file-name
+               "~/Dropbox/References/Programming/Lisp/HyperSpec-7-0/HyperSpec/")))
 
 ;;; MIT-Scheme with SLIME:
 ;; (defun mit-scheme-init (file encoding)

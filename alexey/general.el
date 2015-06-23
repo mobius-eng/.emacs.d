@@ -2,6 +2,8 @@
 ;; Text auto-fill
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 (setq fill-column 80)
+;; Need to have it early on to function properly
+(defvar outline-minor-mode-prefix "\M-#")
 ;; Something to do with autofill...
 (add-hook 'text-mode-hook 'text-mode-hook-identify)
 ;; Disable toolbar and menu-bar
@@ -118,9 +120,9 @@
 ;; Setting up outorg/outshine
 ;; (require 'outorg)
 ;; (require 'outshine)
-(defvar outline-minor-mode-prefix "\M-#")
+
 ;; let's try this for Haskell:
-(setq outshine-preserve-delimiter-whitespace t)
+;; (setq outshine-preserve-delimiter-whitespace t)
 
 (add-hook 'outline-minor-mode-hook (lambda ()
                                      (require 'outshine)
