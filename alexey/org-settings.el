@@ -2,6 +2,11 @@
 (require 'org)
 ;; (require 'org-latex) -- does not exist?
 (require 'ox-latex)
+;; remove ' from forbidden border symbols
+(setf (caddr org-emphasis-regexp-components)
+      (delete ?\' (caddr org-emphasis-regexp-components)))
+;; we must reload org after changin org-emphasis-regexp-components
+(org-reload)
 
 (add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when
              ; global-font-lock-mode is on
