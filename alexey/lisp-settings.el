@@ -116,44 +116,44 @@
     "/usr/local/scmutils/mit-scheme/bin/scheme --library /usr/local/scmutils/mit-scheme/lib --emacs"
   ))
 
-;;; Racket
-(require 'racket-mode)
+;; ;;; Racket
+;; (require 'racket-mode)
 
-(add-hook 'racket-mode-hook
-          (lambda ()
-            (paredit-mode t)
-            (rainbow-delimiters-mode t)
-            (company-mode t)
-            (font-lock-remove-keywords nil '(("\\<\\(FIX\\(ME\\)?\\|TODO\\|HACK\\|REFACTOR\\|NOCOMMIT\\)" 1 font-lock-warning-face t)))
-            (font-lock-add-keywords nil '(("\\<\\(FIXME\\|TODO\\|HACK\\|REFACTOR\\|NOCOMMIT\\)" 1 font-lock-warning-face t)))))
+;; (add-hook 'racket-mode-hook
+;;           (lambda ()
+;;             (paredit-mode t)
+;;             (rainbow-delimiters-mode t)
+;;             (company-mode t)
+;;             (font-lock-remove-keywords nil '(("\\<\\(FIX\\(ME\\)?\\|TODO\\|HACK\\|REFACTOR\\|NOCOMMIT\\)" 1 font-lock-warning-face t)))
+;;             (font-lock-add-keywords nil '(("\\<\\(FIXME\\|TODO\\|HACK\\|REFACTOR\\|NOCOMMIT\\)" 1 font-lock-warning-face t)))))
 
-;;; Gambit-C
-(defun init-gambit ()
-  (interactive)
-  (add-to-list 'load-path "/Library/Gambit-C/current/share/emacs/site-lisp/")
-  (require 'gambit)
-  (setq scheme-program-name "gsc -:d-")
-  (add-hook 'scheme-mode-hook 'rainbow-delimiters-mode))
+;; ;;; Gambit-C
+;; (defun init-gambit ()
+;;   (interactive)
+;;   (add-to-list 'load-path "/Library/Gambit-C/current/share/emacs/site-lisp/")
+;;   (require 'gambit)
+;;   (setq scheme-program-name "gsc -:d-")
+;;   (add-hook 'scheme-mode-hook 'rainbow-delimiters-mode))
 
-;;; Checken Scheme
-(defun init-chicken ()
-  (interactive)
-  (add-to-list 'load-path "/usr/local/Cellar/chicken/4.9.0.1/lib/chicken/7/")
-  (autoload 'chicken-slime "chicken-slime" "SWANK backend for Chicken" t)
-  (add-hook 'scheme-mode-hook
-            (lambda ()
-              (slime-mode t))))
+;; ;;; Checken Scheme
+;; (defun init-chicken ()
+;;   (interactive)
+;;   (add-to-list 'load-path "/usr/local/Cellar/chicken/4.9.0.1/lib/chicken/7/")
+;;   (autoload 'chicken-slime "chicken-slime" "SWANK backend for Chicken" t)
+;;   (add-hook 'scheme-mode-hook
+;;             (lambda ()
+;;               (slime-mode t))))
 
 
-(defun init-bigloo ()
-  (interactive)
-  (add-to-list 'load-path "/usr/local/share/emacs/bigloo")
-  (autoload 'bdb "bdb" "bdb mode" t)
-  (autoload 'bee-mode "bee-mode" "bee mode" t)
-  (setq auto-mode-alist
-        (append '(("\\.scm$" . bee-mode)
-                  ("\\.sch$" . bee-mode)
-                  ("\\.scme$" . bee-mode)
-                  ("\\.bgl$" . bee-mode)
-                  ("\\.bee$" . bee-mode))
-                auto-mode-alist)))
+;; (defun init-bigloo ()
+;;   (interactive)
+;;   (add-to-list 'load-path "/usr/local/share/emacs/bigloo")
+;;   (autoload 'bdb "bdb" "bdb mode" t)
+;;   (autoload 'bee-mode "bee-mode" "bee mode" t)
+;;   (setq auto-mode-alist
+;;         (append '(("\\.scm$" . bee-mode)
+;;                   ("\\.sch$" . bee-mode)
+;;                   ("\\.scme$" . bee-mode)
+;;                   ("\\.bgl$" . bee-mode)
+;;                   ("\\.bee$" . bee-mode))
+;;                 auto-mode-alist)))

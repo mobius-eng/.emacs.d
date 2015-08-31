@@ -4,7 +4,7 @@
 (load-library "org-settings")
 ;; (load-library "haskell-settings")
 (load-library "lisp-settings")
-(load-library "cdlatex")
+;; (load-library "cdlatex")
 ;;; Theme
 (load-theme 'smyx t)
 ;; One day I will set it up
