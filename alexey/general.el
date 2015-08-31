@@ -116,6 +116,7 @@
 ;; * Parenthesis
 (show-paren-mode t)
 (require 'smartparens-config)
+(sp-use-paredit-bindings)
 (sp-pair "(" ")" :wrap "M-(")
 (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
 (define-key smartparens-mode-map (kbd "C-<left>") 'sp-backward-slurp-sexp)
@@ -124,7 +125,6 @@
 (sp-pair "(" ")" :wrap "M-(")
 (sp-pair "[" "]" :wrap "M-[")
 (sp-pair "{" "}" :wrap "M-{")
-(sp-use-paredit-bindings)
 ;; * IDO
 (require 'ido)
 (setq ido-enable-flex-matching t)
@@ -151,13 +151,21 @@
 (global-set-key "\C-xm" 'browse-url-at-point)
 (setq w3m-use-cookies t)
 ;; * Emacs lisp
+;; ** ELDOC
+;; (setq eldoc-documentation-function
+;;       (lambda ()
+;;         (when (or (eql last-command 'new-line) (eql last-command-event 32))
+;;           (let (eldoc-documentation-function)
+;;             (eldoc-print-current-symbol-info)))))
+(setq eldoc-idle-delay 0)
+
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
             (rainbow-delimiters-mode t)
             (eldoc-mode t)
             (auto-complete-mode t)
             (smartparens-strict-mode t)))
-
+ 
 ;; Setting up outorg/outshine
 (defvar outline-minor-mode-prefix "\M-#")
 (require 'outorg)
@@ -171,6 +179,8 @@
                                      (setq outshine-use-speed-commands t)
                                      ))
 (add-hook 'prog-mode-hook 'outline-minor-mode)
+;; * Load theme
+(load-theme 'solarized-dark t)
 
 ;; * Smart mode line
 (setq sml/no-confirm-load-theme t)

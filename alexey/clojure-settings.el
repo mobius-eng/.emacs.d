@@ -1,22 +1,34 @@
 ;; -*- Mode: Emacs-Lisp; -*-
 (require 'clojure-mode)
 (require 'cider)
-(setq cider-repl-pop-to-buffer-on-connect nil)
+(require 'cider-eval-sexp-fu)
+(setq cider-repl-pop-to-buffer-on-connect t)
+(setq nrepl-log-messages nil)
 (setq cider-popup-stacktraces nil)
 (setq cider-repl-print-length 20)
 (setq cider-repl-result-prefix ";;=> ")
 (setq cider-interactive-eval-result-prefix ";; => ")
 (setq nrepl-hide-special-buffers t)
-(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+(setq cider-stacktrace-fill-column 80)
+(setq cider-ovelays-use-font-lock t)
+
+(add-hook 'cider-mode-hook
+          (lambda ()
+            (eldoc-mode t)
+            (company-mode t)))
+
+
+
 (add-hook 'cider-repl-mode-hook '(lambda ()
-                                   (setq rainbow-delimiters-mode t)
-                                   (setq paredit-mode t)))
+                                   (rainbow-delimiters-mode t)
+                                   (smartparens-strict-mode t)
+                                   (company-mode t)))
+
 (add-hook 'clojure-mode-hook '(lambda ()
-                                (setq paredit-mode t)
-                                (setq rainbow-delimiters-mode t)
-                                (setq cider-turn-on-eldoc-mode t)))
+                                (smartparens-strict-mode t)
+                                (rainbow-delimiters-mode t)))
 
-
+(define-key cider-mode-map (kbd "TAB") #'company-indent-or-complete-common)
 ;; ;; Cycle between () {} []
 
 (defun live-delete-and-extract-sexp ()
