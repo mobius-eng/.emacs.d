@@ -4,3 +4,10 @@ backups/*
 elpa/*
 places
 .smex-items
+eshell/*
+url/*
+replace-colorthemes/*
+smex-items
+ido.last
+ido.last~
+abbrev_defs
