@@ -4,7 +4,7 @@
 (load-library "org-settings")
 ;; (load-library "haskell-settings")
 (load-library "lisp-settings")
-(load-library "cdlatex")
+;; (load-library "cdlatex")
 ;;; Theme
 (load-theme 'material t)
 ;; One day I will set it up
@@ -23,7 +23,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("1c57936ffb459ad3de4f2abbc39ef29bfb109eade28405fa72734df1bc252c13" default))))
+    ("0928c3609728401c5b12f7c9f4a34f57af680aecba23532f6d29a0f611f1af9d" "1c57936ffb459ad3de4f2abbc39ef29bfb109eade28405fa72734df1bc252c13" default))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

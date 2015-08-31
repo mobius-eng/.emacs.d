@@ -28,8 +28,6 @@
 (setq default-directory "~/")
 ;; no bells
 (setq ring-bell-function 'ignore)
-;; Enable server-mode
-(server-mode nil)
 ;; Comments
 (global-set-key (kbd  "C-x C-;") 'comment-region)
 (global-set-key (kbd  "C-x M-;") 'uncomment-region)
@@ -52,10 +50,11 @@
   (package-refresh-contents))
 ;; (perhabs incomplete) list of packages
 (setq package-list
-      '(starter-kit
-        starter-kit-bindings
-        starter-kit-eshell
-        starter-kit-lisp
+      '(
+        ; starter-kit
+        ; starter-kit-bindings
+        ; starter-kit-eshell
+        ; starter-kit-lisp
         auctex
         cdlatex
         magit
@@ -79,7 +78,7 @@
         outshine
         ox-impress-js
         ox-reveal
-        paredit
+        ; paredit
         rainbow-delimiters
         slime
         scheme-complete
@@ -96,13 +95,26 @@
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
+;; IDO
+(ido-mode 1)
+(ido-everywhere 1)
+(require 'ido-ubiquitous)
+(ido-ubiquitous-mode 1)
+(require 'smex)
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
 
 ;; Paredit settings:
-(require 'paredit)
+(require 'smartparens)
+(require 'smartparens-config)
 ;; sometimes these keys do not work out of the box
-(define-key paredit-mode-map (kbd "M-(") 'paredit-wrap-round)
-(define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
-(define-key paredit-mode-map (kbd "M-[") 'paredit-wrap-square)
+;; (define-key paredit-mode-map (kbd "M-(") 'paredit-wrap-round)
+;; (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
+;; (define-key paredit-mode-map (kbd "M-[") 'paredit-wrap-square)
 (require 'smooth-scrolling)
 (setq smooth-scroll-margin 5)
 ;; w3m browsing in Emacs
@@ -147,3 +159,7 @@
 (if is-mac
     (menu-bar-mode 1)
   (menu-bar-mode 0))
+;; Enable server-mode
+(require 'server)
+(unless (server-running-p)
+  (server-mode))

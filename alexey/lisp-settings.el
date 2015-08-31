@@ -1,3 +1,9 @@
+;; SMARTPARENS
+(sp-pair "(" ")" :wrap "M-(")
+(sp-pair "[" "]" :wrap "M-[")
+(sp-pair "{" "}" :wrap "M-{")
+;; (define-key smartparens-mode-map (kbd "C-(") 'sp-forward-slurp-sexp)
+(sp-use-paredit-bindings)
 ;; Set LISP SBCL:
 ;; mit-scheme does not work with SLIME
 (setq slime-lisp-implementations
@@ -7,6 +13,7 @@
 ;; Might work with slime, but still didn't figure out how
 ;; perhabs the support is outdated...
 ;; (mit-scheme ("mit-scheme") :init mit-scheme-init)
+
 
 ;; in theory, SLIME can support multiple implementations
 ;; in practice: only one at the time
@@ -19,8 +26,10 @@
 
 (require 'ac-slime)
 
+
 (add-hook 'lisp-mode-hook (lambda ()
                             (rainbow-delimiters-mode t)
+                            (smartparens-strict-mode t)
                             ; (hl-sexp-mode t)
                             (idle-highlight-mode t)
                             (auto-complete-mode)
@@ -30,14 +39,20 @@
 (add-hook 'slime-mode-hook (lambda ()
                              (set-up-slime-ac)
                              (auto-complete-mode)
-                             ))
+                             (when (string= (buffer-name) "*slime-scratch*")
+                               (message "Defining s-e for scratch")
+                               (local-set-key (kbd "s-e") #'slime-eval-print-last-expression))))
 
 (add-hook 'slime-repl-mode-hook (lambda ()
                                   (rainbow-delimiters-mode t)
-                                  (paredit-mode t)
+                                  (smartparens-mode t)
                                   (set-up-slime-ac)
-                                  (auto-complete-mode)
-                                  ))
+                                  (auto-complete-mode)))
+
+(defun slime-new-scratch ()
+  (interactive)
+  (slime-scratch)
+  (local-set-key (kbd "C-j") #'slime-eval-print-last-expression))
 
 (eval-after-load "auto-complete"
   '(add-to-list 'ac-modes 'slime-repl-mode))
