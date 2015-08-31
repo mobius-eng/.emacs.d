@@ -30,6 +30,7 @@
         idle-highlight-mode      ; highlight words in programming
                                  ; buffers
         ido-completing-read+     ; extra IDO
+        ido-yes-or-no            ; y for yes and n for no
         ido-ubiquitous           ; IDO everywhere
         cdlatex                  ; Some clever LaTeX functionality
         org                      ; ORG mode
@@ -54,7 +55,7 @@
         smart-mode-line-powerline-theme
                                         ; better look for mode line
         material-theme           ; nice light and dark themes
-        solorized-theme          ; yet another theme
+        solarized-theme          ; yet another theme
         cider                    ; Clojure support
         cider-eval-sexp-fu       ; Highlight evaled sexp
         clojure-mode
@@ -88,15 +89,13 @@
 (set-default-font
  (cond (win-p "Consolas 10")
        (lin-p "DejaVu Sans Mono 9")
-       (mac-p "Menlo 10")))
+       (mac-p "InputMonoNarrow 12")))
 ;; Some fonts might require extra spacing, uncomment if necessary
 ;; (setq-default line-spacing 3)
 ;; ** On some platforms it is not home...
 (setq default-directory "~/")
 ;; ** No bells
 (setq ring-bell-function 'ignore)
-;; ** Enable server-mode
-(server-mode 1)
 ;; ** Comments
 (global-set-key (kbd  "C-x C-;") 'comment-region)
 (global-set-key (kbd  "C-x M-;") 'uncomment-region)
@@ -122,6 +121,10 @@
 (define-key smartparens-mode-map (kbd "C-<left>") 'sp-backward-slurp-sexp)
 (define-key smartparens-mode-map (kbd "C-M-<right>") 'sp-forward-barf-sexp)
 (define-key smartparens-mode-map (kbd "C-M-<left>") 'sp-backward-barf-sexp)
+(sp-pair "(" ")" :wrap "M-(")
+(sp-pair "[" "]" :wrap "M-[")
+(sp-pair "{" "}" :wrap "M-{")
+(sp-use-paredit-bindings)
 ;; * IDO
 (require 'ido)
 (setq ido-enable-flex-matching t)
@@ -150,7 +153,7 @@
 ;; * Emacs lisp
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
-            (rainbow-delimiter-mode t)
+            (rainbow-delimiters-mode t)
             (eldoc-mode t)
             (auto-complete-mode t)
             (smartparens-strict-mode t)))
@@ -172,3 +175,7 @@
 ;; * Smart mode line
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
+;; * Server mode
+(require 'server)
+(unless (server-running-p)
+  (server-mode))

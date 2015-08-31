@@ -1,6 +1,5 @@
 ;;; Setting for ORG mode
 (require 'org)
-(require 'org-latex)
 (require 'ox-latex)
 
 (add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when
@@ -88,7 +87,7 @@
 (setq org-latex-default-class "memoir")
 
 ;; mac open pdfs in ebib
-(when is-mac
+(when mac-p
  (setq ebib-file-associations '(("pdf" . "open") ("ps" . "open"))))
 
 (defun my-org-mode-setup ()
