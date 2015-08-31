@@ -11,8 +11,23 @@
 ;; in theory, SLIME can support multiple implementations
 ;; in practice: only one at the time
 ;; * QUICKLISP SLIME helper
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-;; (load (expand-file-name "~/.ccl-quicklisp/slime-helper.el"))
+(defvar quicklisp-directories
+  '("~/sbcl-quicklisp/"
+    "~/.sbcl-quicklisp/"
+    "~/ccl-quicklisp/"
+    "~/.ccl-quicklisp/"
+    "~/quicklisp/")
+  "Possible locations of QUICKLISP")
+
+(let ((continue-p t)
+      (dirs quicklisp-directories))
+  (while continue-p
+    (cond ((null dirs) (message "Cannot find slime-helper.el"))
+          ((file-directory-p (expand-file-name (car dirs)))
+           (message "Loading slime-helper.el from %s" (car dirs))
+           (load (expand-file-name "slime-helper.el" (car dirs)))
+           (setq continue-p nil))
+          (t (setq dirs (cdr dirs))))))
 
 ;; * Autocomplete
 (require 'slime-autoloads)

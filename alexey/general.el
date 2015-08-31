@@ -36,7 +36,6 @@
         org                      ; ORG mode
         org-ac                   ; auto-complete for ORG
         org-bullets              ; ???
-        org-magit                ; ???
         org-plus-contrib         ; extra functionality of ORG (babel)
         org2blog                 ; export ORG to blog
         orglue                   ; ???
@@ -45,6 +44,7 @@
         ox-impress-js            ; export IMPRESS presentations
         ox-reveal                ; export REVEAL presentations
         rainbow-delimiters       ; highlight parenthesis
+        ac-slime                 ; auto-complete for slime
         slime                    ; SLIME (Common Lisp IDE)
         scheme-complete          ; Extra for Scheme (MIT-Scheme)
         smex                     ; IDO for M-x command
@@ -64,7 +64,8 @@
         ))
 ;; *** Mac-specific package
 (when mac-p
-  (add-to-list 'package-list 'org-mac-link))
+  (add-to-list 'package-list 'org-mac-link)
+  (add-to-list 'package-list 'exec-path-from-shell))
 
 ;; *** install the missing packages
 (dolist (package package-list)
