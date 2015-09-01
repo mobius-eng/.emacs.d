@@ -1,0 +1,64 @@
+\documentclass[a4paper, fleqn, 12pt]{article}
+\makeatletter
+[NO-DEFAULT-PACKAGES]
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{fourier}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{color}
+\usepackage{natbib}
+\usepackage{hyperref}%[pdftex,colorlinks=true,citecolor=blue]{hyperref}
+\usepackage{lscape}
+\usepackage{soul}
+\usepackage{tabularx}
+\usepackage{booktabs}
+[PACKAGES]
+\textwidth=167mm
+\textheight=230mm
+\voffset=-10mm
+\oddsidemargin=-4mm
+\evensidemargin=-4mm
+%%%               Vectors                          %%%
+\renewcommand{\vec}[1]{\bm{#1}}
+\renewcommand{\Vec}[1]{\overline{#1}}
+\newcommand{\mat}[1]{\mathbf{#1}}
+\newcommand{\gmat}[1]{\vec{#1}}
+%%%     Products, derivatives etc.         %%%
+\newcommand{\vprod}[2]{\left[#1\times #2\right]}
+\newcommand{\sprod}[2]{#1\cdot #2}
+\newcommand{\der}[2]{\frac{d #1}{d #2}}
+\newcommand{\Der}[2]{\frac{d}{d #2}\left(#1\right)}
+\newcommand{\pder}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\Pder}[2]{\frac{\partial}{\partial #2}\left(#1\right)}
+\newcommand{\dder}[2]{\frac{\delta #1}{\delta #2}}
+\DeclareMathOperator{\grad}{grad}
+\DeclareMathOperator{\Div}{div}
+\DeclareMathOperator{\erfc}{erfc}
+\DeclareMathOperator{\Expect}{E}
+\DeclareMathOperator{\Var}{Var}
+\newcommand{\mean}[1]{\langle #1 \rangle}
+\newcommand{\const}{\mathop{\mathrm{const}}}
+\newcommand{\dimension}[1]{\left[\mathrm{#1}\right]}
+%%%     Project specific                         %%%
+\newcommand{\Diff}{\mathcal{D}}
+%%%%%%%%%%          Alexey's comments                       %%%%%%%%%%
+\newcommand{\alemph}[1]{\colorbox{yellow}{#1}}
+\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\alnew}[1]{%\\ul{%
+  \textit{#1}%}%
+}
+%%%%%%%%%%    Hypothesis                                          %%%%%%%%%%
+\theoremstyle{definition}
+\newtheorem{hypothesis}{Hypothesis}
+%%%%% to avoid orphans and widows
+\widowpenalty3000
+\clubpenalty3000
+\makeatother
+[EXTRA]

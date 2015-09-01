@@ -1,13 +1,23 @@
-;;; Setting for ORG mode
+;; -*- Mode: emacs-lisp; -*-
+;; * Setting for ORG mode
 (require 'org)
 (require 'ox-latex)
+;; ** Some tweak: does not work now
+;; remove ' from forbidden border symbols
+;; (eval-after-load "org"
+;;   (when (and (boundp 'org-emphasis-regexp-components)
+;;              (not (null org-emphasis-regexp-components)))
+;;     (setf (caddr org-emphasis-regexp-components)
+;;           (delete ?\' (caddr org-emphasis-regexp-components))))
+;; we must reload org after changing org-emphasis-regexp-components
+;; (org-reload)
 
-(add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when
-             ; global-font-lock-mode is on
-
+;; ** Hooks
 (add-hook 'org-mode-hook (lambda ()
+                           (turn-on-font-lock t)
                            (setq org-use-speed-commands t)
                            (setq org-src-preserve-identation t)))
+
 (setq org-log-done 'time)
 ;; (setq org-log-done 'note)
 ;; recommended to have access to ORG from anywhere
@@ -71,15 +81,25 @@
     (insert-file-contents filePath)
     (buffer-string)))
 
-(setq alexey-org-latex-preambule
-      (get-string-from-file "~/.emacs.d/alexey/org-latex.tex"))
+(setq alexey-org-latex-preambule-memoir
+      (get-string-from-file "~/.emacs.d/alexey/org-memoir.tex"))
+
+(setq alexey-org-latex-preambule-article
+      (get-string-from-file "~/.emacs.d/alexey/org-article.tex"))
 
 ;;; Adding LaTeX memoir class support
 (setq org-latex-classes nil)
 (add-to-list 'org-latex-classes
              (list "memoir"
-                   alexey-org-latex-preambule
+                   alexey-org-latex-preambule-memoir
                    '("\\chapter{%s}" . "\\chapter*{%s}")
+                   '("\\section{%s}" . "\\section*{%s}")
+                   '("\\subsection{%s}" . "\\subsection*{%s}")
+                   '("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+
+(add-to-list 'org-latex-classes
+             (list "article"
+                   alexey-org-latex-preambule-article
                    '("\\section{%s}" . "\\section*{%s}")
                    '("\\subsection{%s}" . "\\subsection*{%s}")
                    '("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
@@ -106,14 +126,42 @@
  (define-key org-mode-map "\C-c(" 'org-mode-reftex-search))
 
 (defun org-mode-reftex-search ()
-  ;;jump to the notes for the paper pointed to at from reftex search
+  "jump to the notes for the paper pointed to at from reftex search"
   (interactive)
   (org-open-link-from-string (format "[[note:%s]]" (first (reftex-citation t)))))
 
-
 (add-hook 'org-mode-hook 'my-org-mode-setup)
 
-(setq ebib-preload-bib-files '("~/Documents/ebib-library.bib"))
+(setq ebib-preload-bib-files (list (expand-file-name "~/Documents/.ebib-library.bib")))
+
+(defun ebib-lib-needs-update-p ()
+  (let ((lib-time (elt (file-attributes (expand-file-name "~/Documents/library.bib"))
+                       5))
+        (ebib-lib-time (elt (file-attributes
+                             (expand-file-name "~/Documents/.ebib-library.bib"))
+                            5)))
+    (cond ((null lib-time) (error "EBIB: library.bib is not found"))
+          ((or (null ebib-lib-time) (time-less-p ebib-lib-time lib-time)) t)
+          (t nil))))
+
+(defun update-ebib-lib ()
+  (save-excursion
+    (let ((lib (find-file (expand-file-name "~/Documents/library.bib"))))
+      (with-current-buffer lib
+        (goto-char 1)
+        (while (re-search-forward ":Users" nil t)
+          (replace-match "/Users"))
+        (goto-char 1)
+        (while (re-search-forward ".pdf:pdf" nil t)
+          (replace-match ".pdf"))
+        (write-file (expand-file-name "~/Documents/.ebib-library.bib"))
+        (kill-buffer)))))
+
+(defun start-ebib ()
+  (interactive)
+  (when (ebib-lib-needs-update-p)
+    (update-ebib-lib))
+  (ebib))
 
 (org-add-link-type 
  "citep" (lambda (path) (ebib (car ebib-preload-bib-files) path))
@@ -229,6 +277,7 @@ of code to whatever theme I'm using's background"
 (setq org-latex-listings 'minted)
 ;; Common Lisp support for minted
 (add-to-list 'org-latex-minted-langs '(lisp "common-lisp"))
+(add-to-list 'org-latex-minted-langs '(emacs-lisp "common-lisp"))
 ;; Use imagemagic to create formulas (since we use PDF output)
 (setq org-latex-create-formula-image-program 'imagemagick)
 
