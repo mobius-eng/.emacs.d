@@ -11,3 +11,4 @@ smex-items
 ido.last
 ido.last~
 abbrev_defs
+server/*
