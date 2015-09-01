@@ -196,6 +196,7 @@
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
 ;; * Server mode
-(require 'server)
-(unless (server-running-p)
-  (server-mode))
+(unless win-p
+  (require 'server)
+  (unless (server-running-p)
+    (server-mode)))
