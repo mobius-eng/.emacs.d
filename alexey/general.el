@@ -32,7 +32,9 @@
         ido-completing-read+     ; extra IDO
         ido-yes-or-no            ; y for yes and n for no
         ido-ubiquitous           ; IDO everywhere
+        auctex                   ; LaTeX
         cdlatex                  ; Some clever LaTeX functionality
+        ebib                     ; Emacs BibTeX
         org                      ; ORG mode
         org-ac                   ; auto-complete for ORG
         org-bullets              ; ???
@@ -87,10 +89,17 @@
 (setq frame-title-format "%b - emacs")
 
 ;; ** Font setting
-(set-default-font
+;; Apparently, it's depricated
+;; (set-default-font
+;;  (cond (win-p "Consolas 10")
+;;        (lin-p "DejaVu Sans Mono 9")
+;;        (mac-p "InputMonoNarrow 12")))
+(set-frame-font
  (cond (win-p "Consolas 10")
        (lin-p "DejaVu Sans Mono 9")
        (mac-p "InputMonoNarrow 12")))
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
 ;; Some fonts might require extra spacing, uncomment if necessary
 ;; (setq-default line-spacing 3)
 ;; ** On some platforms it is not home...
