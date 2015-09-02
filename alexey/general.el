@@ -80,6 +80,8 @@
 (setq fill-column 80)
 ;; Something to do with autofill...
 (add-hook 'text-mode-hook 'text-mode-hook-identify)
+;; ** Blink cursor - disable
+(blink-cursor-mode -1)
 ;; ** Disable toolbar and menu-bar
 (tool-bar-mode 0)
 (menu-bar-mode 0)
