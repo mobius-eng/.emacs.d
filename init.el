@@ -4,9 +4,10 @@
 (load-library "org-settings")
 ;; (load-library "haskell-settings")
 (load-library "lisp-settings")
-(load-library "cdlatex")
+(load-library "clojure-settings")
+;; (load-library "cdlatex")
 ;;; Theme
-(load-theme 'material t)
+;; (load-theme 'solarized-dark t)
 ;; One day I will set it up
 ;; (setq
 ;;    backup-by-copying t      ; don't clobber symlinks
@@ -23,7 +24,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("1c57936ffb459ad3de4f2abbc39ef29bfb109eade28405fa72734df1bc252c13" default))))
+    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
