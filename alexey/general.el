@@ -87,6 +87,8 @@
 (transient-mark-mode 0)
 ;; ** Improve the title
 (setq frame-title-format "%b - emacs")
+;; ** No scroll bars
+(scroll-bar-mode -1)
 
 ;; ** Font setting
 ;; Apparently, it's depricated
