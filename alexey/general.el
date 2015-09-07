@@ -124,9 +124,10 @@
   (exec-path-from-shell-initialize)
   (menu-bar-mode 1))
 ;; ** Win specific
+;; Might need to add more sofisticated search for MSYS/MinGW
 (when win-p
-  (if (file-directory-p "c:/msysgit/bin/")
-      (add-to-list 'exec-path "c:/msysgit/bin/")))
+  (if (file-directory-p "C:/msys64/")
+      (setq shell-file-name "C:/msys64/msys2_shell.bat")))
 
 ;; * Parenthesis
 (show-paren-mode t)
