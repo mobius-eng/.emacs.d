@@ -84,6 +84,7 @@
 (blink-cursor-mode -1)
 ;; ** Disable toolbar and menu-bar
 (tool-bar-mode 0)
+
 (menu-bar-mode 0)
 ;; ** Disable visual feedback on selection
 (transient-mark-mode 0)
@@ -92,14 +93,17 @@
 ;; ** No scroll bars
 (scroll-bar-mode -1)
 
+;; ** File encoding
+;; Always use UNIX encoding
+(setq-default buffer-file-coding-system 'utf-8-unix)
+(setq-default default-buffer-file-coding-system 'utf-8-unix)
+(set-default-coding-systems 'utf-8-unix)
+(prefer-coding-system 'utf-8-unix)
+
 ;; ** Font setting
-;; Apparently, it's depricated
-;; (set-default-font
-;;  (cond (win-p "Consolas 10")
-;;        (lin-p "DejaVu Sans Mono 9")
-;;        (mac-p "InputMonoNarrow 12")))
+;; InputMonoNarrow
 (set-frame-font
- (cond (win-p "Consolas 10")
+ (cond (win-p "InputMonoCondensed 10")
        (lin-p "DejaVu Sans Mono 9")
        (mac-p "InputMonoNarrow 12")))
 (global-set-key (kbd "C-+") 'text-scale-increase)
@@ -136,8 +140,14 @@
 (sp-pair "(" ")" :wrap "M-(")
 (define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
 (define-key smartparens-mode-map (kbd "C-<left>") 'sp-backward-slurp-sexp)
-(define-key smartparens-mode-map (kbd "C-M-<right>") 'sp-forward-barf-sexp)
-(define-key smartparens-mode-map (kbd "C-M-<left>") 'sp-backward-barf-sexp)
+(define-key smartparens-mode-map (kbd "C-S-<right>") 'sp-forward-barf-sexp)
+(define-key smartparens-mode-map (kbd "C-S-<left>") 'sp-backward-barf-sexp)
+
+(define-key smartparens-mode-map (kbd "C-)") 'sp-forward-slurp-sexp)
+(define-key smartparens-mode-map (kbd "C-(") 'sp-backward-slurp-sexp)
+(define-key smartparens-mode-map (kbd "C-}") 'sp-forward-barf-sexp)
+(define-key smartparens-mode-map (kbd "C-{") 'sp-backward-barf-sexp)
+
 (sp-pair "(" ")" :wrap "M-(")
 (sp-pair "[" "]" :wrap "M-[")
 (sp-pair "{" "}" :wrap "M-{")
@@ -160,11 +170,11 @@
 (require 'smooth-scrolling)
 (setq smooth-scroll-margin 5)
 ;; * w3m browsing in Emacs
-(setq browse-url-browser-function 'w3m-browse-url)
-(autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
+;; (setq browse-url-browser-function 'w3m-browse-url)
+;; (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
 ;; optional keyboard short-cut
 (global-set-key "\C-xm" 'browse-url-at-point)
-(setq w3m-use-cookies t)
+;; (setq w3m-use-cookies t)
 ;; * Emacs lisp
 ;; ** ELDOC
 ;; (setq eldoc-documentation-function
@@ -194,12 +204,13 @@
                                      (setq outshine-use-speed-commands t)))
 (add-hook 'prog-mode-hook 'outline-minor-mode)
 ;; * Load theme
-(load-theme 'solarized-dark t)
+(load-theme 'material t)
 
 ;; * Smart mode line
+; (require 'rich-minority)
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
-; (sml/apply-theme 'dark)
+;; (sml/apply-theme 'dark)
 ;; (sml/customize )
 ;; remove magit warning
 (setq magit-last-seen-setup-instructions "1.4.0")

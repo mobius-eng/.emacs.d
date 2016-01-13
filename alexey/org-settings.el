@@ -14,7 +14,7 @@
 
 ;; ** Hooks
 (add-hook 'org-mode-hook (lambda ()
-                           (turn-on-font-lock t)
+                           (turn-on-font-lock)
                            (setq org-use-speed-commands t)
                            (setq org-src-preserve-identation t)))
 
@@ -297,3 +297,6 @@ of code to whatever theme I'm using's background"
 ;;                       (overlay-buffer org-edit-src-overlay)
 ;;                     nrepl-buffer-ns))))
 ;; (provide 'ob-clojure)
+
+;; (defun org-font-lock-ensure ()
+;;   (font-lock-fontify-buffer))
