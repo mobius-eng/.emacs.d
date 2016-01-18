@@ -16,5 +16,5 @@ smex-items
 srecode-map.el
 tramp
 url/*
-
+*.el~
 

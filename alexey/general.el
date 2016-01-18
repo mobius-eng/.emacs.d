@@ -51,7 +51,6 @@
         scheme-complete          ; Extra for Scheme (MIT-Scheme)
         smex                     ; IDO for M-x command
         smyx-theme               ; nice dark theme
-        w3m                      ; web-browser
         smooth-scrolling         ; smooth scrolling
         smart-mode-line          ; better mode line
         smart-mode-line-powerline-theme
@@ -68,6 +67,10 @@
 (when mac-p
   (add-to-list 'package-list 'org-mac-link)
   (add-to-list 'package-list 'exec-path-from-shell))
+
+;; *** W3M web-browser only for non-windows OSs
+(unless win-p
+  (add-to-list 'package-list 'w3m))
 
 ;; *** install the missing packages
 (dolist (package package-list)
@@ -101,17 +104,17 @@
 (prefer-coding-system 'utf-8-unix)
 
 ;; ** Font setting
-;; InputMonoNarrow
 (set-frame-font
  (cond (win-p "InputMonoCondensed 10")
-       (lin-p "DejaVu Sans Mono 9")
+       (lin-p "InputMonoCondensed 10")
        (mac-p "InputMonoNarrow 12")))
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
 ;; Some fonts might require extra spacing, uncomment if necessary
 ;; (setq-default line-spacing 3)
 ;; ** On some platforms it is not home...
-(setq default-directory "~/")
+;; TODO: check if it works on Windows
+(setq default-directory (expand-file-name "~/"))
 ;; ** No bells
 (setq ring-bell-function 'ignore)
 ;; ** Comments
