@@ -12,21 +12,24 @@
 (setq cider-stacktrace-fill-column 80)
 (setq cider-ovelays-use-font-lock t)
 
-(add-hook 'cider-mode-hook
-          (lambda ()
-            (eldoc-mode t)
-            (company-mode t)))
+(add-hook
+ 'cider-mode-hook
+ (lambda ()
+   (eldoc-mode t)
+   (company-mode t)))
 
+(add-hook
+ 'cider-repl-mode-hook
+ (lambda ()
+   (rainbow-delimiters-mode t)
+   (smartparens-strict-mode t)
+   (company-mode t)))
 
-
-(add-hook 'cider-repl-mode-hook '(lambda ()
-                                   (rainbow-delimiters-mode t)
-                                   (smartparens-strict-mode t)
-                                   (company-mode t)))
-
-(add-hook 'clojure-mode-hook '(lambda ()
-                                (smartparens-strict-mode t)
-                                (rainbow-delimiters-mode t)))
+(add-hook
+ 'clojure-mode-hook
+ (lambda ()
+   (smartparens-strict-mode t)
+   (rainbow-delimiters-mode t)))
 
 (define-key cider-mode-map (kbd "TAB") #'company-indent-or-complete-common)
 ;; ;; Cycle between () {} []

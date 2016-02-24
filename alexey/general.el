@@ -48,7 +48,7 @@
         rainbow-delimiters       ; highlight parenthesis
         ac-slime                 ; auto-complete for slime
         slime                    ; SLIME (Common Lisp IDE)
-        scheme-complete          ; Extra for Scheme (MIT-Scheme)
+        ;; scheme-complete          ; Extra for Scheme (MIT-Scheme)
         smex                     ; IDO for M-x command
         smyx-theme               ; nice dark theme
         smooth-scrolling         ; smooth scrolling

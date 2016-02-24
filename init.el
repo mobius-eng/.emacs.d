@@ -8,11 +8,11 @@
 
 (add-to-list 'load-path "~/.emacs.d/alexey/")
 (load-library "general")
-(load-library "org-settings")
 ;; (load-library "haskell-settings")
 (load-library "lisp-settings")
 (load-library "scheme-settings")
 (load-library "clojure-settings")
+(load-library "org-settings")
 ;; (load-library "cdlatex")
 ;;; Theme
 ;; (load-theme 'solarized-dark t)

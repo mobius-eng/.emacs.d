@@ -25,11 +25,18 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
+(setq org-babel-clojure-backend 'cider)
+(require 'ob-clojure)
+
+
 ;; Evaluate common lisp code
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((lisp . t) (emacs-lisp . t) (ditaa . t) (scheme . t) (haskell . t) (clojure . t)
-   (python . t)))
+   (python . t) (gnuplot . t)))
+
+;; Dangerous but otherwise too tedeous
+(setq org-confirm-babel-evaluate nil)
 
 (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
 
@@ -110,6 +117,9 @@
 (when mac-p
  (setq ebib-file-associations '(("pdf" . "open") ("ps" . "open"))))
 
+(when lin-p
+  (setq ebib-file-associations '(("pdf" . "evince") ("ps" . "evince"))))
+
 (defun my-org-mode-setup ()
  (when (and (buffer-file-name)
             (file-exists-p (buffer-file-name)))
@@ -120,8 +130,7 @@
   (reftex-set-cite-format
    '((?p . "[[citep:%l]]")
      (?t . "[[citet:%l]]")
-     (?n . "[[note::%l]]")
-     )))
+     (?n . "[[note::%l]]"))))
  (define-key org-mode-map "\C-c\C-g" 'reftex-citation)
  (define-key org-mode-map "\C-c(" 'org-mode-reftex-search))
 
@@ -149,8 +158,10 @@
     (let ((lib (find-file (expand-file-name "~/Documents/library.bib"))))
       (with-current-buffer lib
         (goto-char 1)
-        (while (re-search-forward ":Users" nil t)
-          (replace-match "/Users"))
+        (cond (mac-p (while (re-search-forward ":Users" nil t)
+                       (replace-match "/Users")))
+              (lin-p (while (re-search-forward ":home" nil t)
+                       (replace-match "/home"))))
         (goto-char 1)
         (while (re-search-forward ".pdf:pdf" nil t)
           (replace-match ".pdf"))

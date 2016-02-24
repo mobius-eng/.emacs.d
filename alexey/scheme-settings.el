@@ -38,7 +38,7 @@
 ;; (autoload 'scheme-get-current-symbol-info "scheme-complete" nil t)
 ;; ** Hokes
 ;; *** SCHEME-MODE
-(setq geiser-active-implementations '(racket chicken))
+;; (setq geiser-active-implementations '(racket chicken))
 
 (add-hook 'scheme-mode-hook
           (lambda ()
@@ -46,6 +46,9 @@
             ;; (setq eldoc-documentation-function 'scheme-get-current-symbol-info)
             ;; (eldoc-mode)
             (rainbow-delimiters-mode t)
+            (smartparens-strict-mode t)
+            (idle-highlight-mode t)
+            (company-mode t)
             (new-warning-words)))
 ;; *** INFERIOR-SCHEME-MODE
 ;; (add-hook 'inferior-scheme-mode-hook
@@ -69,13 +72,13 @@
 
 
 ;; * Others: for future reference
-;; ;;; Gambit-C
-;; (defun init-gambit ()
-;;   (interactive)
-;;   (add-to-list 'load-path "/Library/Gambit-C/current/share/emacs/site-lisp/")
-;;   (require 'gambit)
-;;   (setq scheme-program-name "gsc -:d-")
-;;   (add-hook 'scheme-mode-hook 'rainbow-delimiters-mode))
+;;; Gambit-C
+(defun init-gambit ()
+  (interactive)
+  (add-to-list 'load-path "/usr/local/Gambit/share/emacs/site-lisp/gambc/")
+  (require 'gambit)
+  (setq scheme-program-name "gsc -:d-")
+  (add-hook 'scheme-mode-hook 'rainbow-delimiters-mode))
 
 ;; ;;; Checken Scheme
 ;; (defun init-chicken ()

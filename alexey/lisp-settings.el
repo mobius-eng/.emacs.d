@@ -1,16 +1,18 @@
 ;; * Inferior LISP: SBCL is default
 (setq slime-lisp-implementations
-      '((sbcl ("sbcl") :coding-system utf-8-unix)
+      '((sbcl ("sbcl" "--dynamic-space-size" "2048") :coding-system utf-8-unix)
         (ccl ("ccl64"
-              "-K" "utf-8"))))
+              "-K" "utf-8"))
+        (ecl ("ecl"))))
 
 ;; * QUICKLISP SLIME helper
 (defvar quicklisp-directories
-  '("~/sbcl-quicklisp/"
+  '("~/.quicklisp/"
+    "~/quicklisp/"
+    "~/sbcl-quicklisp/"
     "~/.sbcl-quicklisp/"
     "~/ccl-quicklisp/"
-    "~/.ccl-quicklisp/"
-    "~/quicklisp/")
+    "~/.ccl-quicklisp/")
   "Possible locations of QUICKLISP")
 
 (let ((continue-p t)
