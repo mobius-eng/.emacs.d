@@ -38,7 +38,8 @@
 ;; (autoload 'scheme-get-current-symbol-info "scheme-complete" nil t)
 ;; ** Hokes
 ;; *** SCHEME-MODE
-;; (setq geiser-active-implementations '(racket chicken))
+(setq geiser-active-implementations '(racket))
+(setq geiser-repl-startup-time 20000)
 
 (add-hook 'scheme-mode-hook
           (lambda ()
@@ -50,6 +51,8 @@
             (idle-highlight-mode t)
             (company-mode t)
             (new-warning-words)))
+
+
 ;; *** INFERIOR-SCHEME-MODE
 ;; (add-hook 'inferior-scheme-mode-hook
 ;;           (lambda ()

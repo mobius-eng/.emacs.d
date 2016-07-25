@@ -1,23 +1,30 @@
 ;; -*- Mode: emacs-lisp; -*-
-;; * Some preliminaries
+
+;; * General Settings
+
 ;; ** Identify operating system
 (setq mac-p (equal system-type 'darwin))
 (setq win-p (eql system-type 'windows-nt))
 (setq lin-p (eql system-type 'gnu/linux))
-;; ** Setup packages:
+
+;; ** Setup packages
 (require 'package)
-;; *** start with GNU: remove other entries if set by default
+
+;; *** Start with GNU: remove other entries if set by default
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")))
+
 ;; *** MELPA
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 ;; *** ORG
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
-;; *** fetch the list of packages available 
+
+;; *** Fetch the list of packages available 
 (unless package-archive-contents
   (package-refresh-contents))
-;; *** Setup packages
+
+;; *** Pakage list
 (setq package-list
       '(magit                    ; git interface
         auto-complete            ; auto complete (SLIME)
@@ -37,7 +44,7 @@
         ebib                     ; Emacs BibTeX
         org                      ; ORG mode
         org-ac                   ; auto-complete for ORG
-        org-bullets              ; ???
+        org-bullets              ; UTF8 bullets in Org captions
         org-plus-contrib         ; extra functionality of ORG (babel)
         org2blog                 ; export ORG to blog
         orglue                   ; ???
@@ -58,11 +65,12 @@
         material-theme           ; nice light and dark themes
         solarized-theme          ; yet another theme
         cider                    ; Clojure support
-        cider-eval-sexp-fu       ; Highlight evaled sexp
+        cider-eval-sexp-fu       ; Highlight evaled sexp (use eval-sexp-fu without Clojure)
         clojure-mode
         clojure-mode-extra-font-locking
         smartparens             ; Help with many parens
         ))
+
 ;; *** Mac-specific package
 (when mac-p
   (add-to-list 'package-list 'org-mac-link)
@@ -77,66 +85,80 @@
   (unless (package-installed-p package)
     (package-install package)))
 
-;; * General settings for Emacs
-;; ** Text auto-fill
+;; ** General settings for Emacs
+
+;; *** Text auto-fill
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 (setq fill-column 80)
 ;; Something to do with autofill...
 (add-hook 'text-mode-hook 'text-mode-hook-identify)
-;; ** Blink cursor - disable
-(blink-cursor-mode -1)
-;; ** Disable toolbar and menu-bar
-(tool-bar-mode 0)
 
+;; *** Blink cursor - disable
+(blink-cursor-mode -1)
+
+;; *** Disable toolbar and menu-bar
+(tool-bar-mode 0)
 (menu-bar-mode 0)
-;; ** Disable visual feedback on selection
+
+;; *** Disable visual feedback on selection
 (transient-mark-mode 0)
-;; ** Improve the title
+
+;; *** Improve the title
 (setq frame-title-format "%b - emacs")
-;; ** No scroll bars
+
+;; *** No scroll bars
 (scroll-bar-mode -1)
 
-;; ** File encoding
+;; *** File encoding
 ;; Always use UNIX encoding
 (setq-default buffer-file-coding-system 'utf-8-unix)
 (setq-default default-buffer-file-coding-system 'utf-8-unix)
 (set-default-coding-systems 'utf-8-unix)
 (prefer-coding-system 'utf-8-unix)
 
-;; ** Font setting
+;; *** Font setting
 (set-frame-font
  (cond (win-p "InputMonoCondensed 10")
-       (lin-p "InputMonoCondensed 10")
+       (lin-p "InputMonoCondensed 9")
        (mac-p "InputMonoNarrow 12")))
+;; (set-frame-font "Inconsolata 9")
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
 ;; Some fonts might require extra spacing, uncomment if necessary
 ;; (setq-default line-spacing 3)
-;; ** On some platforms it is not home...
+
+;; *** On some platforms it is not home...
 ;; TODO: check if it works on Windows
 (setq default-directory (expand-file-name "~/"))
-;; ** No bells
+
+;; *** No bells
 (setq ring-bell-function 'ignore)
-;; ** Comments
+
+;; *** Comments
 (global-set-key (kbd  "C-x C-;") 'comment-region)
 (global-set-key (kbd  "C-x M-;") 'uncomment-region)
-;; ** Spaces only (no tabs)
+
+;; *** Spaces only (no tabs)
 (setq-default indent-tabs-mode nil)
-;; ** Always show column number
+
+;; *** Always show column number
 (setq-default column-number-mode t)
 
-;; ** Mac specific
+;; ** Platform specific
+
+;; *** Mac specific
 (when mac-p
   (require 'exec-path-from-shell)
   (exec-path-from-shell-initialize)
   (menu-bar-mode 1))
-;; ** Win specific
+
+;; *** Win specific
 ;; Might need to add more sofisticated search for MSYS/MinGW
 (when win-p
   (if (file-directory-p "C:/msys64/")
       (setq shell-file-name "C:/msys64/msys2_shell.bat")))
 
-;; * Parenthesis
+;; ** Parenthesis
 (show-paren-mode t)
 (require 'smartparens-config)
 (sp-use-paredit-bindings)
@@ -154,7 +176,8 @@
 (sp-pair "(" ")" :wrap "M-(")
 (sp-pair "[" "]" :wrap "M-[")
 (sp-pair "{" "}" :wrap "M-{")
-;; * IDO
+
+;; ** IDO
 (require 'ido)
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
@@ -165,21 +188,26 @@
 (setq ido-create-new-buffer 'always)
 (setq ido-file-extensions-order
       '(".lisp" ".el" ".org" ".tex"  ".md" ".txt"))
-;; ** IDO on M-x
+
+;; *** IDO on M-x
 (require 'smex)
 (smex-initialize)
 (global-set-key (kbd "M-x") 'smex)
-;; * Smooth scrolling
+
+;; ** Smooth scrolling
 (require 'smooth-scrolling)
 (setq smooth-scroll-margin 5)
-;; * w3m browsing in Emacs
-;; (setq browse-url-browser-function 'w3m-browse-url)
+
+;; ** w3m browsing in Emacs
+(setq browse-url-browser-function 'w3m-browse-url)
+;; (setq browse-url-browser-function 'eww-browse-url)
 ;; (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
 ;; optional keyboard short-cut
 (global-set-key "\C-xm" 'browse-url-at-point)
 ;; (setq w3m-use-cookies t)
-;; * Emacs lisp
-;; ** ELDOC
+
+;; ** Emacs lisp
+;; *** ELDOC
 ;; (setq eldoc-documentation-function
 ;;       (lambda ()
 ;;         (when (or (eql last-command 'new-line) (eql last-command-event 32))
@@ -194,7 +222,7 @@
             (auto-complete-mode t)
             (smartparens-strict-mode t)))
  
-;; * Setting up outorg/outshine
+;; *** Setting up outorg/outshine
 (defvar outline-minor-mode-prefix "\M-#")
 (require 'outorg)
 (require 'outshine)
@@ -206,18 +234,22 @@
                                      (outshine-hook-function)
                                      (setq outshine-use-speed-commands t)))
 (add-hook 'prog-mode-hook 'outline-minor-mode)
-;; * Load theme
+
+;; ** Load theme
 (load-theme 'material t)
 
-;; * Smart mode line
+;; ** Smart mode line
 ; (require 'rich-minority)
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
 ;; (sml/apply-theme 'dark)
 ;; (sml/customize )
 ;; remove magit warning
+
+;; ** Magit settings
 (setq magit-last-seen-setup-instructions "1.4.0")
-;; * Server mode
+
+;; ** Server mode
 (require 'server)
 (unless (server-running-p)
   (server-mode))

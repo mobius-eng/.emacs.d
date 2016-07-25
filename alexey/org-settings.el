@@ -1,9 +1,14 @@
 ;; -*- Mode: emacs-lisp; -*-
 ;; * Setting for ORG mode
+
+;; ** All requires
 (require 'org)
 (require 'ox-latex)
+(require 'ox-reveal)
+
 ;; ** Some tweak: does not work now
 ;; remove ' from forbidden border symbols
+;; to allow qutoed symbols to be used as verbatim
 ;; (eval-after-load "org"
 ;;   (when (and (boundp 'org-emphasis-regexp-components)
 ;;              (not (null org-emphasis-regexp-components)))
@@ -20,36 +25,42 @@
 
 (setq org-log-done 'time)
 ;; (setq org-log-done 'note)
-;; recommended to have access to ORG from anywhere
+
+;; ** Recommended: have access to ORG from anywhere
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
+;; ** Programming in Org
+
+;; *** Clojure with CIDER
 (setq org-babel-clojure-backend 'cider)
 (require 'ob-clojure)
 
 
-;; Evaluate common lisp code
+;; *** Evaluate code in org
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((lisp . t) (emacs-lisp . t) (ditaa . t) (scheme . t) (haskell . t) (clojure . t)
    (python . t) (gnuplot . t)))
 
-;; Dangerous but otherwise too tedeous
+;; *** Dangerous! but otherwise too tedeous
 (setq org-confirm-babel-evaluate nil)
 
-(add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
+;; ** Inline images
+(add-hook 'org-babel-after-execute-hook 'display-inline-images-no-error 'append)
 
-(defun bh/display-inline-images ()
+(defun display-inline-images-no-error ()
   (condition-case nil
       (org-display-inline-images)
     (error nil)))
 
 ;; (setq org-ditaa-jar-path "/usr/local/Cellar/ditaa/0.9/libexec/ditaa0_9.jar")
 
-
+;; ** Blogging in Org
 (require 'org2blog-autoloads)
 
+;; *** Old setup for Wordpress - obsolete
 (setq org2blog/wp-blog-alist
       '(("mobius"
          :url "https://mobiusengineering.wordpress.com/xmlrpc.php"
@@ -58,6 +69,7 @@
          :default-categories ("lisp" "programming")
          :tags-as-categories nil)))
 
+;; No clue...
 ;; (defun url-cookie-expired-p (cookie)
 ;;   "Return non-nil if COOKIE is expired."
 ;;   (let ((exp (url-cookie-expires cookie)))
@@ -77,11 +89,13 @@
         "objc" "perl" "php" "text" "powershell" "python" "ruby" "scala" "sql"
         "vb" "xml"
         "sh" "emacs-lisp" "lisp" "lua"))
- 
+
+;; ** Highlight code on export
 ;; this will use emacs syntax higlighting in your #+BEGIN_SRC
 ;; <language> <your-code> #+END_SRC code blocks.
 (setq org-src-fontify-natively t)
 
+;; ** LaTeX export setup
 (defun get-string-from-file (filePath)
   "Return filePath's file content."
   (with-temp-buffer
@@ -94,7 +108,7 @@
 (setq alexey-org-latex-preambule-article
       (get-string-from-file "~/.emacs.d/alexey/org-article.tex"))
 
-;;; Adding LaTeX memoir class support
+;; *** Adding LaTeX memoir class support
 (setq org-latex-classes nil)
 (add-to-list 'org-latex-classes
              (list "memoir"
@@ -104,6 +118,7 @@
                    '("\\subsection{%s}" . "\\subsection*{%s}")
                    '("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
 
+;; *** Article
 (add-to-list 'org-latex-classes
              (list "article"
                    alexey-org-latex-preambule-article
@@ -111,15 +126,18 @@
                    '("\\subsection{%s}" . "\\subsection*{%s}")
                    '("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
 
+;; *** Memoir is default
 (setq org-latex-default-class "memoir")
 
+;; *** Platform specific
 ;; mac open pdfs in ebib
 (when mac-p
- (setq ebib-file-associations '(("pdf" . "open") ("ps" . "open"))))
-
+  (setq ebib-file-associations '(("pdf" . "open") ("ps" . "open"))))
+;; linux: use evince (hopefully available)
 (when lin-p
   (setq ebib-file-associations '(("pdf" . "evince") ("ps" . "evince"))))
 
+;; ** Adding refences
 (defun my-org-mode-setup ()
  (when (and (buffer-file-name)
             (file-exists-p (buffer-file-name)))
@@ -131,6 +149,7 @@
    '((?p . "[[citep:%l]]")
      (?t . "[[citet:%l]]")
      (?n . "[[note::%l]]"))))
+ 
  (define-key org-mode-map "\C-c\C-g" 'reftex-citation)
  (define-key org-mode-map "\C-c(" 'org-mode-reftex-search))
 
@@ -141,8 +160,10 @@
 
 (add-hook 'org-mode-hook 'my-org-mode-setup)
 
+;; ** Ebib library
 (setq ebib-preload-bib-files (list (expand-file-name "~/Documents/.ebib-library.bib")))
 
+;; *** Fix Mendeley's BibTeX format
 (defun ebib-lib-needs-update-p ()
   (let ((lib-time (elt (file-attributes (expand-file-name "~/Documents/library.bib"))
                        5))
@@ -153,6 +174,7 @@
           ((or (null ebib-lib-time) (time-less-p ebib-lib-time lib-time)) t)
           (t nil))))
 
+;; Windows version needs further fix
 (defun update-ebib-lib ()
   (save-excursion
     (let ((lib (find-file (expand-file-name "~/Documents/library.bib"))))
@@ -168,12 +190,14 @@
         (write-file (expand-file-name "~/Documents/.ebib-library.bib"))
         (kill-buffer)))))
 
+;; Launch EBIB using =start-ebib= command
 (defun start-ebib ()
   (interactive)
   (when (ebib-lib-needs-update-p)
     (update-ebib-lib))
   (ebib))
 
+;; ** Managing link format exports (Harvard style)
 (org-add-link-type 
  "citep" (lambda (path) (ebib (car ebib-preload-bib-files) path))
  (lambda (path desc format)
@@ -246,6 +270,7 @@
            (format "\\citet*{%s}" path)
              (format "\\citet*[%s]{%s}" desc path))))))
 
+;; ** PDFLaTeX commands
 ;; TODO: insert bibtex support
 ;; but this might need to be customised on per project basis
 (setq org-latex-pdf-process
@@ -253,6 +278,7 @@
         "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
         "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"))
 
+;; ** Some hooks for HTML export - obsolete???
 ;; Adapted from
 ;; http://emacs.stackexchange.com/questions/3374/set-the-background-of-org-exported-code-blocks-according-to-theme
 (defun my/org-inline-css-hook (exporter)
@@ -270,9 +296,7 @@ of code to whatever theme I'm using's background"
 
 (add-hook 'org-export-before-processing-hook 'my/org-inline-css-hook)
 
-
-;;; Automatically change parent note to DONE
-
+;; ** Automatically change parent note to DONE
 (defun org-summary-todo (n-done n-not-done)
   "Switch entry to DONE when all subentries are done, to TODO otherwise."
   (let (org-log-done org-log-states)   ; turn off logging
@@ -280,34 +304,35 @@ of code to whatever theme I'm using's background"
 
 (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
-;;; Toggle UTF8 symbols in ORG
+;; ** Other settings
+
+;; *** Toggle UTF8 symbols in ORG
 (setq org-pretty-entities t)
-;;; CDLaTeX-light for ORG
+
+;; *** CDLaTeX-light for ORG
 (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
-;;; Better source code appearence in LaTeX
+
+;; *** Better source code appearence in LaTeX
 (setq org-latex-listings 'minted)
-;; Common Lisp support for minted
+
+;; *** Common Lisp support for minted
 (add-to-list 'org-latex-minted-langs '(lisp "common-lisp"))
 (add-to-list 'org-latex-minted-langs '(emacs-lisp "common-lisp"))
-;; Use imagemagic to create formulas (since we use PDF output)
+
+;; *** Use imagemagic to create formulas (since we use PDF output)???
 (setq org-latex-create-formula-image-program 'imagemagick)
 
-;;;; Org Babel for Clojure: does not quite work: cannot find CIDER
-;;;; connection
-;; (require 'ob)
-;; (add-to-list 'org-babel-tangle-lang-exts '("clojure" . "clj"))
-;; (defvar org-babel-default-header-args:clojure 
-;;   '((:results . "silent")))
-;; (defun org-babel-execute:clojure (body params)
-;;   "Execute a block of Clojure code with Babel."
-;;   (nrepl-interactive-eval body))
-;; (add-hook 'org-src-mode-hook
-;;           '(lambda ()
-;;              (set (make-local-variable 'nrepl-buffer-ns) 
-;;                   (with-current-buffer 
-;;                       (overlay-buffer org-edit-src-overlay)
-;;                     nrepl-buffer-ns))))
-;; (provide 'ob-clojure)
+;; *** Org-bullets
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
-;; (defun org-font-lock-ensure ()
-;;   (font-lock-fontify-buffer))
+;; ** Show "breadcrumbs" in agenda
+(setq org-agenda-prefix-format
+      '((agenda . " %i %-12:c%?-12t% s")
+        (timeline . "  % s")
+        (todo .
+              " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+        (tags .
+              " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+        (search . " %i %-12:c")))
+

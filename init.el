@@ -32,7 +32,10 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("d3df47c843c22d8f0177fe3385ae95583dc8811bd6968240f7da42fd9aa51b0b" "54159ea82516378faa7c4d25fb549b843effb1eb932f0925dce1348de7a659ba" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
+    ("fa11f855b5f606f84e50106a7360c72aac88fee5f6fb8084aa4329009b61c5a2" "d3df47c843c22d8f0177fe3385ae95583dc8811bd6968240f7da42fd9aa51b0b" "54159ea82516378faa7c4d25fb549b843effb1eb932f0925dce1348de7a659ba" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
+ '(org-agenda-files
+   (quote
+    ("~/Dropbox/PhD/year-poroposal-2016/proposal-2016.org")))
  '(package-selected-packages
    (quote
     (popwin org-plus-contrib geiser w3m solarized-theme smyx-theme smooth-scrolling smex smartparens smart-mode-line-powerline-theme scheme-complete rainbow-delimiters ox-reveal ox-impress-js outshine orglue org2blog org-bullets org-ac material-theme magit ido-yes-or-no ido-ubiquitous idle-highlight-mode elisp-slime-nav ebib ctable company clojure-mode-extra-font-locking cider-eval-sexp-fu cider cdlatex auctex ac-slime))))
