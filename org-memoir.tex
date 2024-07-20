@@ -1,0 +1,43 @@
+\documentclass[listings, a4paper, fleqn, pdftex, 12pt, openany, oneside, final]{memoir}
+[NO-DEFAULT-PACKAGES]
+[PACKAGES]
+\makeatletter
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{fourier}
+\usepackage[pdftex]{graphicx}
+\usepackage{subfig}
+\usepackage{color}
+\usepackage{natbib}
+\usepackage{hyperref}%[pdftex,colorlinks=true,citecolor=blue]{hyperref}
+\usepackage{lscape}
+\usepackage{soul}
+\usepackage{tabularx}
+\usepackage{booktabs}
+%\usepackage{listings}
+%\usepackage{listing}
+\usepackage{minted}
+\chapterstyle{verville}
+\beforechapskip=-17mm
+\textwidth=167mm
+\textheight=230mm
+\voffset=-10mm
+\oddsidemargin=-4mm
+\evensidemargin=-4mm
+%%%%%%%%%%    Hypothesis                                          %%%%%%%%%%
+\theoremstyle{definition}
+\newtheorem{hypothesis}{Hypothesis}
+%%%%% to avoid orphans and widows
+\widowpenalty3000
+\clubpenalty3000
+%%% Common Lisp shortcut for minted
+\newminted{cl}{}
+\makeatother
+[EXTRA]

@@ -1,0 +1,23 @@
+#+LATEX_HEADER: \renewcommand{\vec}[1]{\bm{#1}}
+#+LATEX_HEADER: \renewcommand{\Vec}[1]{\overline{#1}}
+#+LATEX_HEADER: \newcommand{\mat}[1]{\mathbf{#1}}
+#+LATEX_HEADER: \newcommand{\gmat}[1]{\vec{#1}}
+#+LATEX_HEADER: \newcommand{\vprod}[2]{\left[#1\times #2\right]}
+#+LATEX_HEADER: \newcommand{\sprod}[2]{#1\cdot #2}
+#+LATEX_HEADER: \newcommand{\der}[2]{\frac{d #1}{d #2}}
+#+LATEX_HEADER: \newcommand{\Der}[2]{\frac{d}{d #2}\left(#1\right)}
+#+LATEX_HEADER: \newcommand{\pder}[2]{\frac{\partial #1}{\partial #2}}
+#+LATEX_HEADER: \newcommand{\Pder}[2]{\frac{\partial}{\partial #2}\left(#1\right)}
+#+LATEX_HEADER: \newcommand{\dder}[2]{\frac{\delta #1}{\delta #2}}
+#+LATEX_HEADER: \DeclareMathOperator{\grad}{grad}
+#+LATEX_HEADER: \DeclareMathOperator{\Div}{div}
+#+LATEX_HEADER: \DeclareMathOperator{\erfc}{erfc}
+#+LATEX_HEADER: \DeclareMathOperator{\Expect}{\mathbb{E}}
+#+LATEX_HEADER: \DeclareMathOperator{\Var}{\mathbb{V}}
+#+LATEX_HEADER: \DeclareMathOperator{\Prob}{\mathbb{P}}
+#+LATEX_HEADER: \newcommand{\mean}[1]{\langle #1 \rangle}
+#+LATEX_HEADER: \newcommand{\const}{\mathop{\mathrm{const}}}
+#+LATEX_HEADER: \newcommand{\dimension}[1]{\left[\mathrm{#1}\right]}
+#+LATEX_HEADER: \newcommand{\Diff}{\mathcal{D}}
+#+LATEX_HEADER: \newcommand{\alemph}[1]{\colorbox{yellow}{#1}}
+#+LATEX_HEADER: \newcommand{\red}[1]{{\color{red}#1}}
