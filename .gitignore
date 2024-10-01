@@ -17,4 +17,7 @@ srecode-map.el
 tramp
 url/*
 *.el~
-
+*.py~
+*.tex~
+.gitignore~
+eln-cache/*

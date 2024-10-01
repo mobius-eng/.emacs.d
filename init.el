@@ -5,6 +5,42 @@
  'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
 (package-initialize)
+;; uncomment if Emacs complains
+(setq package-check-signature nil)
+
+(setq package-list
+      '(
+	;; company-stan                   
+	;; dir-treeview                   
+	;; eldoc-stan                     
+	;; ess-R-data-view                
+	;; ess-r-insert-obj               
+	;; ess-smart-equals               
+	;; ess-view                      
+	;; ess-view-data                 
+	;; gnu-elpa-keyring-update
+	;; helm
+	helm-bibtex                    
+	;; helm-bibtexkey                 
+	helm-org                       
+	material-theme                 
+	mindre-theme                   
+	org-cite-overlay          
+	org-modern          
+	smart-mode-line-powerline-theme
+	smooth-scrolling               
+	solarized-theme                
+	the-matrix-theme
+	))
+
+;; Enable for package installation
+;; (dolist (package package-list)
+;;   (unless (package-installed-p package)
+;;     (package-install package)))
+
+
+
+
 
 ;; manage packages via use-package
 (unless (package-installed-p 'use-package)
@@ -62,11 +98,14 @@
 (show-paren-mode t)
 
 ;; Fira works better with Matrix theme, but may need more tweaking
-(set-frame-font "Fira Code Medium:spacing=100:size=12" nil t)
+(set-frame-font "Fira Code:spacing=100:size=14" nil t)
 ;; (set-frame-font "Cascadia Code:spacing=100:size=16" nil t)
 
+;; (set-frame-font "Century Old Style Std:size=14" nil t)
+
 ;; *** Text auto-fill
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
+;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 (setq fill-column 80)
 ;; Something to do with autofill...
 (add-hook 'text-mode-hook 'text-mode-hook-identify)
@@ -117,13 +156,41 @@
     (insert-file-contents file-path)
     (buffer-string)))
 
+
+(defun org-insert-image-from-clipboard ()
+  (interactive)
+  (let* ((the-dir (file-name-directory buffer-file-name))
+     (attachments-dir (file-name-as-directory (concat the-dir "media")))
+     (png-file-name (format-time-string "%a%d%b%Y_%H%M%S.png"))
+     (full-png-path (concat attachments-dir png-file-name))
+     (rel-png-path (concat (file-name-as-directory "media") png-file-name))
+     (script-path (concat (expand-file-name (file-name-as-directory user-emacs-directory)) "imgrab.py")))
+    (if (not (file-exists-p attachments-dir))
+        (make-directory attachments-dir)) 
+    (call-process "python" nil t nil script-path rel-png-path full-png-path)
+    ;; no need for that: the script writes into org directly
+    ;; (insert (concat "[[./media/" png-file-name "]]"))
+    (org-display-inline-images)
+    ))
+
+;; key C-c p is defined in `use-package org`
+;; (define-key org-mode-map (kbd "C-S-v") 'org-insert-image-from-clipboard)
+
 ;; Packages
 
 (use-package gnu-elpa-keyring-update)
 
-(use-package solarized-theme
-  :config
-  (load-theme 'solarized-dark t))
+;; (use-package solarized-theme
+;;   :config
+;;   (load-theme 'solarized-dark t))
+
+(use-package mindre-theme
+    ; :ensure t
+    :custom
+    (mindre-use-more-bold nil)
+    (mindre-use-faded-lisp-parens t)
+    :config
+    (load-theme 'mindre t))
 
 (use-package smart-mode-line
   :config
@@ -133,8 +200,8 @@
 
 (use-package helm
   :bind ("M-x" . helm-M-x)
-  ;; :config
-  ;; (use-package helm-bibtex)
+  :config
+  (use-package helm-bibtex)
 )
 
 (use-package company
@@ -159,7 +226,10 @@
   (use-package ess-view
     :config
     (use-package ess-view-data))
-  (setq inferior-ess-r-program "R"))
+  ;; (setq inferior-ess-r-program "R")
+  ;; (setq inferior-ess-r-program "/C/Program\\ Files/R/R-4.4.1/bin/R.exe")
+  (setq inferior-ess-r-program "C:\\Program Files\\R\\R-4.4.1\\bin\\R.exe")
+  )
 
 (use-package stan-mode
   :config
@@ -174,15 +244,22 @@
   (add-hook 'org-mode-hook
             #'(lambda ()
                 (turn-on-font-lock)
+                (variable-pitch-mode 1)
                 (setq org-use-speed-commands t)
                 (setq org-src-preserve-identation t)
                 (visual-line-mode 1)
-                (org-modern-mode 1)
                 (org-display-inline-images)
-                (org-latex-preview 1)))
-  (use-package org-tempo)
+                (org-latex-preview 1)
+                (setq org-hide-emphasis-markers t)
+                (org-modern-mode 1)
+                (setq fill-column 80)
+                (olivetti-mode 1)
+                ))
   (setq org-log-done 'time)
   (setq org-adapt-indentation nil)
+  ;; use fixed-pitch for tables
+  ;; it is set now in custom-theme-set-faces
+  ;; (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
   (setq org-confirm-babel-evaluate nil)
   (add-hook 'org-babel-after-execute-hook
             'display-inline-images-no-error
@@ -198,25 +275,92 @@
   (use-package org-modern
     :config
     (setq org-modern-star
-          '("◉" " ○" "  ◈" "   ◇" "    ✳")))
-  (use-package org-ref
-    :bind (:map org-mode-map
-                ("C-c ]" . org-ref-insert-link)
-                ("C-c b" . helm-bibtex)))
-  ;; (require 'org-ref-helm)
-  (use-package org-tempo
+          '("◈" " ◉" "  ○" "   ◇" "    ✳")))
+  (use-package olivetti)
+  ;; new functionality for citations
+  (use-package helm-org)
+  (require 'oc)
+  (use-package citar
+    :ensure t
+    :init
+    (setq org-cite-insert-processor 'citar
+          org-cite-follow-processor 'citar
+          org-cite-activate-processor 'citar
+          ;; citar-bibliography org-cite-global-bibliography
+          ;; citar-notes-paths '("~/Path/To/NotesDir"))
+          )
+    )
+  (use-package vertico
+    :ensure t
     :config
-    (tempo-define-template
-     "org-header"
-     '("#+TITLE: " n p
-       "#+STARTUP: latexpreview" n
-       "#+SETUPFILE: ~/.emacs.d/latex_header.org" n
-       "#+PROPERTY: header-args :colnames yes :height 3 :width 5 :session *R*" n
-       )
-     "<t"
-     "Insert a typical header"
-     'org-tempo-tags))
+    (vertico-mode))
+
+  (use-package orderless
+    :ensure t
+    :init
+    (setq completion-styles '(orderless basic)
+          completion-category-overrides
+          '((file (styles basic partial-completion)))))
+  
+  (use-package embark
+    :after vertico
+    :ensure t)
+
+  (use-package marginalia
+    :after vertico
+    :ensure t
+    :config
+    (marginalia-mode))
+
+  (use-package citeproc
+    :ensure t)
+
+  (use-package org-download
+    :config
+    (setq org-download-method 'directory)
+    (setq org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))
+    (setq org-download-image-org-width 600)
+    (setq org-download-link-format "[[file:%s]]\n"
+          org-download-abbreviate-filename-function #'file-relative-name)
+    (setq org-download-link-format-function #'org-download-link-format-function-default))
+  
+  (require 'org-tempo)
+  (tempo-define-template
+   "org-header"
+   '("#+TITLE: " n p
+     "#+STARTUP: latexpreview" n
+     "#+SETUPFILE: ~/.emacs.d/latex_header.org" n
+     "#+PROPERTY: header-args :colnames yes :height 3 :width 5 :session *R*" n
+     "#+LATEX_CLASS: article" n
+     "#+AUTHOR: Alexey V. Cherkaev" n
+     "#+BIBLIOGRAPHY: ../PubRefs.bib" n
+     "#+CITE_EXPORT: csl ../ieee.csl" n
+     )
+   "<t"
+   "Insert a typical header"
+   'org-tempo-tags)
+  (tempo-define-template
+   "r-plot"
+   '("#+begin_src R :results graphics file :file media/file.svg :exports both" n
+     "" n p
+     "" n
+     "#+end_src" n
+     )
+   "<rp"
+   "Insert R for plot output"
+   'org-tempo-tags)
+  (tempo-define-template
+   "r-table"
+   '("#+begin_src R :results table :exports both" n
+     "" n p
+     "" n
+     "#+end_src" n
+     )
+   "<rt"
+   "Insert R for table output"
+   'org-tempo-tags)
   ;; LaTeX export settings
+  (setq org-preview-latex-image-directory "media/")
   (let ((default-directory "~/.emacs.d/"))
     (setq alexey-org-latex-preambule-memoir
           (get-string-from-file (expand-file-name "org-memoir.tex")))
@@ -240,9 +384,13 @@
   ;; *** Memoir is default
   (setq org-latex-default-class "memoir")
   (setq org-latex-listings 'minted)
+  (setq org-latex-pdf-process
+        '("latexmk -shell-escape -f -pdf -%latex -interaction=nonstopmode -output-directory=%o/pdf %f"))
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
-         ("C-c b" . org0iswitchb)))
+         ("C-c b" . org-iswitchb)
+         ("C-c p" . org-insert-image-from-clipboard)
+))
 
 (use-package dir-treeview
   :bind ("C-c d" . dir-treeview)
@@ -250,49 +398,64 @@
   (setq dir-treeview-compare-filenames-function 'zettl-greaterp)
   (setq dir-treeview-show-hidden-files nil)
   (setq dir-treeview-show-backup-files nil)
-  (setq dir-treeview-default-root "~/")
+  (setq dir-treeview-default-root "~/OneDrive/Documents/Research/")
   (setq dir-treeview-show-in-side-window t))
 
+
+;;; work-around  for org-ctags obnoxious behavior
+(with-eval-after-load 'org-ctags (setq org-open-link-functions nil))
 
 
 ;; make R evals in ORG using session
 
 ;; uncomment if Emacs complains
-;; (setq package-check-signature nil)
-(setq package-list
-      '(
-        gnu-elpa-keyring-update
-        company
-	htmlize
-        helm
-        helm-bibtex
-	; idle-highlight-mode - requires Emacs 29
-	ido-completing-read+ ; formerly ido-ubiquitous
-	ido-yes-or-no
-	org
-	; org-ac
-	org-bullets
-        ; org-latex-impatient
-	; org-plus-contrib
-        org-ref
-	smex
-	smyx-theme
-	smooth-scrolling
-	smart-mode-line
-	smart-mode-line-powerline-theme
-	material-theme
-	solarized-theme
-        the-matrix-theme
-	ess
-	ess-R-data-view
-	ess-r-insert-obj
-	ess-smart-equals
-	ess-smart-underscore
-	ess-view
-	ess-view-data
-	python-mode
-        ; emacs-treeview
-        dir-treeview))
+(setq package-check-signature nil)
+;; (setq package-list
+;;       '(
+;;         gnu-elpa-keyring-update
+;;         solarized-theme
+;;         smart-mode-line
+;;         smart-mode-line-powerline-theme
+;;         bibtex
+;;         helm
+;;         helm-bibtex
+;;         company
+;;         smooth-scrolling
+;;         ess
+;;         ess-R-data-view
+;;         ess-r-insert-obj
+;;         ess-view
+;;         ess-view-data
+;;         stan-mode
+;;         org
+;;         ;; org-tempo ; part of org?
+;;         org-modern
+;;         org-ref
+;;         ;; org-ref-helm ; part of org-ref?
+;;         dir-treeview
+;; 	htmlize
+;; 	material-theme
+;; 	solarized-theme
+;;         the-matrix-theme))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ;; Enable for package installation
 ;; (dolist (package package-list)
@@ -389,9 +552,47 @@
 ;;   (dired-hide-details-mode 1))
                        
 
+(custom-theme-set-faces
+ 'user
+ '(variable-pitch ((t (:family "Calibri" :height 100 :slant normal))))
+ '(fixed-pitch ((t (:family "Fira Code" :height 80))))
+ '(org-table ((t (:inherit fixed-pitch))))
+ '(org-block ((t (:inherit variable-pitch :slant italic))))
+ '(org-code ((t (:inherit variable-pitch :slant italic))))
+ '(org-level-1 ((t (:inherit variable-pitch :height 1.5))))
+ '(org-level-2 ((t (:inherit variable-pitch :height 1.3))))
+ '(org-level-3 ((t (:inherit variable-pitch :slant italic :height 1.2))))
+ )
+
+;; :foundry "outline" 
+ ;; (custom-theme-set-faces
+ ;;   'user
+ ;;   '(org-block ((t (:inherit fixed-pitch))))
+ ;;   '(org-code ((t (:inherit (shadow fixed-pitch)))))
+ ;;   '(org-document-info ((t (:foreground "dark orange"))))
+ ;;   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+ ;;   '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+ ;;   '(org-link ((t (:foreground "royal blue" :underline t))))
+ ;;   '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ ;;   '(org-property-value ((t (:inherit fixed-pitch))) t)
+ ;;   '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ ;;   '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
+ ;;   '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+ ;;   '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
 
 
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(fixed-pitch ((t (:family "Fira Code" :height 80))))
+;;  '(org-block ((t (:slant italic))))
+;;  '(org-code ((t (:slant italic))))
+;;  '(org-table ((t (:inherit fixed-pitch))))
+;;  '(variable-pitch ((t (:family "Calibri" :height 100 :slant normal)))))
 
+ 
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -399,13 +600,20 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("fee7287586b17efbfda432f05539b58e86e059e78006ce9237b8732fde991b4c" default))
- '(ispell-dictionary nil)
+   '("b23f3067e27a9940a563f1fb3bf455aabd0450cb02c3fa4ad43f75a583311216" default))
  '(package-selected-packages
-   '(company-stan eldoc-stan stan-mode use-package org-modern dir-treeview python-mode ess-view-data ess-view ess-smart-underscore ess-smart-equals ess-r-insert-obj ess-R-data-view ess the-matrix-theme solarized-theme material-theme smart-mode-line-powerline-theme smart-mode-line smooth-scrolling smyx-theme smex org-ref org-bullets ido-yes-or-no ido-completing-read+ idle-highlight-mode helm-bibtex helm htmlize company gnu-elpa-keyring-update cmake-mode)))
+   '(org-download olivetti org-tempo marginalia embark orderless vertico citar the-matrix-theme solarized-theme smooth-scrolling smart-mode-line-powerline-theme org-modern org-cite-overlay mindre-theme material-theme helm-org helm-bibtex gnu-elpa-keyring-update ess-view-data ess-view ess-smart-equals ess-r-insert-obj ess-R-data-view eldoc-stan dir-treeview company-stan)))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(fixed-pitch ((t (:family "Fira Code" :height 80))))
+ '(org-block ((t (:inherit variable-pitch :slant italic))))
+ '(org-code ((t (:inherit variable-pitch :slant italic))))
+ '(org-level-1 ((t (:inherit variable-pitch :height 1.5))))
+ '(org-level-2 ((t (:inherit variable-pitch :height 1.3))))
+ '(org-level-3 ((t (:inherit variable-pitch :slant italic :height 1.2))))
+ '(org-table ((t (:inherit fixed-pitch))))
+ '(variable-pitch ((t (:family "Calibri" :height 100 :slant normal)))))
