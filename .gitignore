@@ -21,3 +21,5 @@ url/*
 *.tex~
 .gitignore~
 eln-cache/*
+.cache/*
+transient/*
