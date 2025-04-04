@@ -1,11 +1,10 @@
 #+LATEX_HEADER: \usepackage{siunitx}
-#+LATEX_HEADER: \usepackage{undertilde}
 #+LATEX_HEADER: \sisetup{input-decimal-markers={.}, output-decimal-marker = {\cdotp{}}}
 #+LATEX_HEADER: \renewcommand{\Vec}[1]{\overline{#1}}
 #+LATEX_HEADER: \renewcommand{\vec}[1]{\overset{\,\rightarrow}{#1}}
 #+LATEX_HEADER: \newcommand{\covec}[1]{\overset{\,\leftarrow}{#1}}
 #+LATEX_HEADER: \newcommand{\tensor}[1]{\overset{\,\leftrightarrow}{#1}}
-#+LATEX_HEADER: \newcommand{\tensora}[1]{\utilde{#1}}
+#+LATEX_HEADER: \newcommand{\tensora}[1]{\underset{\!\!\sim}{#1}}
 #+LATEX_HEADER: \newcommand{\mat}[1]{\left[#1\right]}
 #+LATEX_HEADER: \newcommand{\gmat}[1]{\vec{#1}}
 #+LATEX_HEADER: \newcommand{\vprod}[2]{\left[#1\times #2\right]}
@@ -20,7 +19,7 @@
 #+LATEX_HEADER: \DeclareMathOperator{\erfc}{erfc}
 #+LATEX_HEADER: \DeclareMathOperator{\Expect}{\mathbb{E}}
 #+LATEX_HEADER: \DeclareMathOperator{\Var}{\mathbb{V}}
-#+LATEX_HEADER: \DeclareMathOperator{\Prob}{\mathbb{P}}
+#+LATEX_HEADER: \DeclareMathOperator{\PP}{\mathbb{P}}
 #+LATEX_HEADER: \newcommand{\mean}[1]{\langle #1 \rangle}
 #+LATEX_HEADER: \newcommand{\const}{\mathop{\mathrm{const}}}
 #+LATEX_HEADER: \newcommand{\dimension}[1]{\left[\mathrm{#1}\right]}

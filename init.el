@@ -254,6 +254,14 @@
 
 
 ;; ** org
+
+;; for non-breakable space in org
+(defun insert-nbsp (&rest args)
+  (interactive)
+  (insert "\\nbsp{}"))
+
+
+
 (use-package org
   :config
   (add-hook 'org-mode-hook
@@ -296,7 +304,7 @@
   ;; new functionality for citations
   (use-package helm-org)
   (require 'oc)
-  (setq org-cite-global-bibliography '("~/research/03-literature/library.bib"))
+  (setq org-cite-global-bibliography '("~/research/03-literature/lib.bib"))
   (use-package citar
     :ensure t
     :init
@@ -304,7 +312,7 @@
           org-cite-follow-processor 'citar
           org-cite-activate-processor 'citar
           citar-bibliography org-cite-global-bibliography
-          citar-notes-paths '("~/research/03-literature"))
+          citar-notes-paths '("~/research/03-literature/notes/"))
     )
   (use-package vertico
     :ensure t
@@ -351,7 +359,7 @@
      "#+PROPERTY: header-args :colnames yes :height 3 :width 5 :session *R*" n
      "#+LATEX_CLASS: article" n
      "#+AUTHOR: Alexey V. Cherkaev" n
-     (format "#+BIBLIOGRAPHY: %s/library.bib" lit-path) n
+     (format "#+BIBLIOGRAPHY: %s/lib.bib" lit-path) n
      (format
       "#+CITE_EXPORT: csl %s/ieee.csl"
       lit-path) n
@@ -406,7 +414,7 @@
   (setq org-latex-listings 'minted)
   (setq org-latex-pdf-process
         ;; -output-directory=%o/pdf
-        '("latexmk -shell-escape -f -pdf -%latex -interaction=nonstopmode -output-directory=%o %f"))
+        '("latexmk -shell-escape -f -pdf -%latex -interaction=nonstopmode -output-directory=pdf/%o %f"))
   ;; Custom link (unused)
   (org-link-set-parameters
    "myfile"
@@ -417,10 +425,14 @@
          ("C-c a" . org-agenda)
          ("C-c b" . org-iswitchb)
          ("C-c p" . org-insert-image-from-clipboard)
+         ("C-c i" . citar-insert-citation)
+         ("C-c n" . citar-open-notes)
+         ("C-~"   . insert-nbsp)
          )
   
 
-  )
+  ) ;; org
+
 
 
 ;; ** dir-treeview (disabled; superceeded by treemacs)
@@ -438,6 +450,12 @@
 (use-package treemacs
   :bind ("C-c t" . 'treemacs-select-window)
   ;; :config
+  )
+
+
+;; ** multiple-cursors
+(use-package multiple-cursors
+  :bind ("C-S-c C-S-c" . mc/edit-lines)
   )
 
 ;; *** main settings (cannot be in use-package for some reason)
@@ -513,7 +531,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(magit cmake-mode vertico treemacs smooth-scrolling smart-mode-line-powerline-theme outshine org-modern org-download orderless olivetti mindre-theme marginalia helm-org helm-bibtex ess-view-data ess-view ess-smart-equals ess-r-insert-obj ess-R-data-view embark eldoc-stan company-stan citar)))
+   '(auctex multiple-cursors pdf-tools cmake-ide magit cmake-mode vertico treemacs smooth-scrolling smart-mode-line-powerline-theme outshine org-modern org-download orderless olivetti mindre-theme marginalia helm-org helm-bibtex ess-view-data ess-view ess-smart-equals ess-r-insert-obj ess-R-data-view embark eldoc-stan company-stan citar)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
