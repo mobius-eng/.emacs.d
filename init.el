@@ -9,12 +9,12 @@
 (setq package-check-signature nil)
 
 (setq package-list
-      '(
+  '(
 	;; company-stan                   
 	;; dir-treeview                   
 	;; eldoc-stan                     
 	;; ess-R-data-view                
-	;; ess-r-insert-obj               
+	;; ess-r-insert-obj
 	;; ess-smart-equals               
 	;; ess-view                      
 	;; ess-view-data                 
@@ -31,8 +31,7 @@
 	smooth-scrolling               
 	solarized-theme                
 	the-matrix-theme
-        outshine
-	))
+  outshine))
 
 ;; Enable for package installation
 ;; (dolist (package package-list)
@@ -304,7 +303,7 @@
   ;; new functionality for citations
   (use-package helm-org)
   (require 'oc)
-  (setq org-cite-global-bibliography '("~/research/03-literature/lib.bib"))
+  ;(setq org-cite-global-bibliography '("~/research/03-literature/lib.bib"))
   (use-package citar
     :ensure t
     :init
@@ -312,7 +311,8 @@
           org-cite-follow-processor 'citar
           org-cite-activate-processor 'citar
           citar-bibliography org-cite-global-bibliography
-          citar-notes-paths '("~/research/03-literature/notes/"))
+          ; citar-notes-paths '("~/research/03-literature/notes/")
+          )
     )
   (use-package vertico
     :ensure t
@@ -350,7 +350,7 @@
       ))
   
   (require 'org-tempo)
-  (setq lit-path (expand-file-name "~/research/03-literature"))
+  ; (setq lit-path (expand-file-name "~/research/03-literature"))
   (tempo-define-template
    "org-header"
    '("#+TITLE: " n p
