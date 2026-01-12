@@ -4,10 +4,39 @@
 (add-to-list
  'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
-
 (package-initialize)
 ;; uncomment if Emacs complains
 (setq package-check-signature nil)
+
+(setq package-list
+  '(
+	;; company-stan                   
+	;; dir-treeview                   
+	;; eldoc-stan                     
+	;; ess-R-data-view                
+	;; ess-r-insert-obj
+	;; ess-smart-equals               
+	;; ess-view                      
+	;; ess-view-data                 
+	;; gnu-elpa-keyring-update
+	;; helm
+	helm-bibtex                    
+	;; helm-bibtexkey                 
+	helm-org                       
+	material-theme                 
+	mindre-theme                   
+	org-cite-overlay          
+	org-modern          
+	smart-mode-line-powerline-theme
+	smooth-scrolling               
+	solarized-theme                
+	the-matrix-theme
+  outshine))
+
+;; Enable for package installation
+;; (dolist (package package-list)
+;;   (unless (package-installed-p package)
+;;     (package-install package)))
 
 
 ;; manage packages via use-package
@@ -15,10 +44,8 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-;; manage package installation via use-package
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
-
 
 
 ;; * Main vanila Emacs settings
@@ -128,13 +155,50 @@
 ;; key C-c p is defined in `use-package org`
 ;; (define-key org-mode-map (kbd "C-S-v") 'org-insert-image-from-clipboard)
 
+;; * Packages
 
-;; ** Packages config
+;; ** GNU keyring -- never seems to work for me
+;; (use-package gnu-elpa-keyring-update)
+
+
 ;; ** Themes
+;; Uncomment which theme should be loaded
+
+;; (use-package solarized-theme
+;;   :config
+;;   (load-theme 'solarized-dark t))
+
+;; (use-package mindre-theme
+;;     ; :ensure t
+;;     ;; :custom
+;;     ;; (mindre-use-more-bold nil)
+;;     ;; (mindre-use-faded-lisp-parens t)
+;;     :config
+;;     (load-theme 'mindre t))
+
+(load-theme 'leuven-dark)
+
+
+;; (use-package the-matrix-theme
+;;   :config
+;;   (load-theme 'the-matrix t))
+
 
 (use-package smart-mode-line
   :config
   (use-package smart-mode-line-powerline-theme))
+
+;; ** bibtex
+(use-package bibtex)
+
+
+;; ** helm (better M-x)
+(use-package helm
+  :bind ("M-x" . helm-M-x)
+  :config
+  (use-package helm-bibtex)
+)
+
 
 ;; ** company
 (use-package company
@@ -145,8 +209,6 @@
         company-idle-delay 0.45
         company-minimum-prefix-length 3
         company-tooltip-limit 10))
-
-
 
 ;; ** smooth-scrolling
 (use-package smooth-scrolling
@@ -163,9 +225,9 @@
   (use-package ess-view
     :config
     (use-package ess-view-data))
-  (setq inferior-ess-r-program "R")
+  ;; (setq inferior-ess-r-program "R")
   ;; (setq inferior-ess-r-program "/C/Program\\ Files/R/R-4.4.1/bin/R.exe")
-  ;; (setq inferior-ess-r-program "C:\\Program Files\\R\\R-4.4.1\\bin\\R.exe")
+  (setq inferior-ess-r-program "C:\\Program Files\\R\\R-4.4.1\\bin\\R.exe")
   )
 
 ;; ** stan-mode
@@ -188,125 +250,14 @@
     (add-hook 'c-mode-hook 'outshine-mode))
   )
 
-;; ** BibTeX and BibLaTeX management
-(use-package ebib)
-;; TODO: configure
 
-;; ** citar -- insert citation
-(use-package citar
-  :custom
-  (citar-bibliography '("~/OneDrive/Documents/Zotero-files/lib.bib")))
-
-;; ** citeproc -- process CSL citations
-;; I suspect org uses it internally
-(use-package citeproc)
-  
-;; ** helm (better M-x)
-;; While other alternatives exist, helm seems to be the most advanced
-;; (although maybe buggy) and other packages use helm
-;; so, let's stick with it
-(use-package helm
-  :bind ("M-x" . helm-M-x)
-  :config
-  (use-package helm-bibtex))
-
-;; ** olivetti -- distraction free writing mode
-;; the main use is within org
-(use-package olivetti)
-
-;; ** vertico -- better UI for completion
-(use-package vertico
-  :init
-  (vertico-mode))
-
-;; ** orderless -- completion style, used with vertico
-(use-package orderless
-  :custom
-  ;; Configure a custom style dispatcher (see the Consult wiki)
-  ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
-  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles partial-completion))))
-  (completion-category-defaults nil) ;; Disable defaults, use our settings
-  (completion-pcm-leading-wildcard t)) ;; Emacs 31: partial-completion behaves like substring
-
-
-;; ** embark -- choose a command to run based on what is near point
-;; other package included that work better with embark, e.g. marginalia
-
-(use-package marginalia
-  :after vertico
-  :config
-  (marginalia-mode))
-
-
-(use-package embark
-  :after vertico
-  :bind
-  (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-;" . embark-dwim)        ;; good alternative: M-.
-   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
-
-  :init
-
-  ;; Optionally replace the key help with a completing-read interface
-  (setq prefix-help-command #'embark-prefix-help-command)
-
-  ;; Show the Embark target at point via Eldoc. You may adjust the
-  ;; Eldoc strategy, if you want to see the documentation from
-  ;; multiple providers. Beware that using this can be a little
-  ;; jarring since the message shown in the minibuffer can be more
-  ;; than one line, causing the modeline to move up and down:
-
-  ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
-  ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
-
-  ;; Add Embark to the mouse context menu. Also enable `context-menu-mode'.
-  ;; (context-menu-mode 1)
-  ;; (add-hook 'context-menu-functions #'embark-context-menu 100)
-
-  :config
-
-  ;; Hide the mode line of the Embark live/completions buffers
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
-
-;; Consult users will also want the embark-consult package.
-(use-package embark-consult
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
-
-;; ** treemacs
-(use-package treemacs
-  :bind ("C-c t" . 'treemacs-select-window)
-  ;; :config
-  )
-
-;; ** multiple-cursors
-(use-package multiple-cursors
-  :bind ("C-S-c C-S-c" . mc/edit-lines)
-  )
 
 ;; ** org
-
 
 ;; for non-breakable space in org
 (defun insert-nbsp (&rest args)
   (interactive)
   (insert "\\nbsp{}"))
-
-;; attempt to fix italic font appearance
-(defun my/org-remove-italic-underline ()
-  (face-remap-reset-base 'org-italic)
-  ;; (setq-local face-remapping-alist
-  ;;             (assq-delete-all 'org-italic face-remapping-alist))
-  ;; (face-remap-add-relative 'org-italic '(:inherit variable-pitch :slant italic :underline nil))
-  (face-remap-add-relative
-   'italic
-   '(:slant italic :underline nil))
-  )
 
 
 
@@ -315,6 +266,7 @@
   (add-hook 'org-mode-hook
             #'(lambda ()
                 (turn-on-font-lock)
+                (variable-pitch-mode 1)
                 (setq org-use-speed-commands t)
                 (setq org-src-preserve-identation t)
                 (visual-line-mode 1)
@@ -324,8 +276,6 @@
                 (org-modern-mode 1)
                 (setq fill-column 80)
                 (olivetti-mode 1)
-                (variable-pitch-mode 1)
-                (my/org-remove-italic-underline)
                 (setq org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))
                 ))
   (setq org-log-done 'time)
@@ -349,12 +299,46 @@
     :config
     (setq org-modern-star
           '("◈" " ◉" "  ○" "   ◇" "    ✳")))
+  (use-package olivetti)
   ;; new functionality for citations
   (use-package helm-org)
   (require 'oc)
-  (setq org-cite-insert-processor 'citar
-        org-cite-follow-processor 'citar
-        org-cite-activate-processor 'citar)
+  ;(setq org-cite-global-bibliography '("~/research/03-literature/lib.bib"))
+  (use-package citar
+    :ensure t
+    :init
+    (setq org-cite-insert-processor 'citar
+          org-cite-follow-processor 'citar
+          org-cite-activate-processor 'citar
+          citar-bibliography org-cite-global-bibliography
+          ; citar-notes-paths '("~/research/03-literature/notes/")
+          )
+    )
+  (use-package vertico
+    :ensure t
+    :config
+    (vertico-mode))
+
+  (use-package orderless
+    :ensure t
+    :init
+    (setq completion-styles '(orderless basic)
+          completion-category-overrides
+          '((file (styles basic partial-completion)))))
+  
+  (use-package embark
+    :after vertico
+    :ensure t)
+
+  (use-package marginalia
+    :after vertico
+    :ensure t
+    :config
+    (marginalia-mode))
+
+  (use-package citeproc
+    :ensure t)
+
   (use-package org-download
     :config
     (progn
@@ -366,17 +350,16 @@
       ))
   
   (require 'org-tempo)
-  (setq lit-path (car citar-bibliography))
+  ; (setq lit-path (expand-file-name "~/research/03-literature"))
   (tempo-define-template
    "org-header"
-   ;; note: figure height and width set for PNG, for SVG use 3 and 5
    '("#+TITLE: " n p
      "#+STARTUP: latexpreview" n
      "#+SETUPFILE: ~/.emacs.d/latex_header.org" n
-     "#+PROPERTY: header-args :colnames yes :height 300 :width 500 :session *R*" n
+     "#+PROPERTY: header-args :colnames yes :height 3 :width 5 :session *R*" n
      "#+LATEX_CLASS: article" n
      "#+AUTHOR: Alexey V. Cherkaev" n
-     (format "#+BIBLIOGRAPHY: %s" lit-path) n
+     (format "#+BIBLIOGRAPHY: %s/lib.bib" lit-path) n
      (format
       "#+CITE_EXPORT: csl %s/ieee.csl"
       lit-path) n
@@ -386,7 +369,7 @@
    'org-tempo-tags)
   (tempo-define-template
    "r-plot"
-   '("#+begin_src R :results graphics file :file media/file.png :exports both" n
+   '("#+begin_src R :results graphics file :file media/file.svg :exports both" n
      "" n p
      "" n
      "#+end_src" n
@@ -450,69 +433,97 @@
 
   ) ;; org
 
+
+
+;; ** dir-treeview (disabled; superceeded by treemacs)
+;; (use-package dir-treeview
+;;   :bind ("C-c d" . dir-treeview)
+;;   :config
+;;   (setq dir-treeview-compare-filenames-function 'zettl-greaterp)
+;;   (setq dir-treeview-show-hidden-files nil)
+;;   (setq dir-treeview-show-backup-files nil)
+;;   (setq dir-treeview-default-root "~/OneDrive/Documents/Research/")
+;;   (setq dir-treeview-show-in-side-window t))
+
+;; ** treemacs
+;; *** load package
+(use-package treemacs
+  :bind ("C-c t" . 'treemacs-select-window)
+  ;; :config
+  )
+
+
+;; ** multiple-cursors
+(use-package multiple-cursors
+  :bind ("C-S-c C-S-c" . mc/edit-lines)
+  )
+
+;; *** main settings (cannot be in use-package for some reason)
+;; (progn
+;;   (require 'treemacs)
+;;   (setf
+;;    (treemacs-current-workspace)
+;;    (treemacs-workspace->create!
+;;     :name "Research2"
+;;     :projects
+;;     (list
+;;      (treemacs-project->create!
+;;       :name "Research2"
+;;       :path (expand-file-name "~/research/")
+;;       :path-status 'local-readable)
+;;      )))
+;;   (treemacs--persist))
+
 ;; ** Fix for org-ctags
 ;;; work-around  for org-ctags obnoxious behavior
 (with-eval-after-load 'org-ctags (setq org-open-link-functions nil))
-
-;; ** pdf-tools -- better PDF viewer
-
-(use-package pdf-tools
-   :defer t
-   :config
-       (pdf-tools-install)
-       (setq-default pdf-view-display-size 'fit-page)
-   :bind (:map pdf-view-mode-map
-         ("\\" . hydra-pdftools/body)
-         ("<s-spc>" .  pdf-view-scroll-down-or-next-page)
-         ("g"  . pdf-view-first-page)
-         ("G"  . pdf-view-last-page)
-         ("l"  . image-forward-hscroll)
-         ("h"  . image-backward-hscroll)
-         ("j"  . pdf-view-next-page)
-         ("k"  . pdf-view-previous-page)
-         ("e"  . pdf-view-goto-page)
-         ("u"  . pdf-view-revert-buffer)
-         ("al" . pdf-annot-list-annotations)
-         ("ad" . pdf-annot-delete)
-         ("aa" . pdf-annot-attachment-dired)
-         ("am" . pdf-annot-add-markup-annotation)
-         ("at" . pdf-annot-add-text-annotation)
-         ("y"  . pdf-view-kill-ring-save)
-         ("i"  . pdf-misc-display-metadata)
-         ("s"  . pdf-occur)
-         ("b"  . pdf-view-set-slice-from-bounding-box)
-         ("r"  . pdf-view-reset-slice)))
-
-;; unavailable?
-;; (use-package org-pdfview
-;;   :config 
-;;   (add-to-list 'org-file-apps
-;;                '("\\.pdf\\'" . (lambda (file link)
-;;                                  (org-pdfview-open link)))))
 
 
 ;; * Custom theme settings (for variable pitch font)
 ;; "Calibri"
 (custom-theme-set-faces
  'user
- '(variable-pitch ((t (:family "TeX Gyre Schola" :height 100 :slant normal))))
- ;; '(variable-pitch ((t (:family "DejaVu Sans" :height 100 :slant normal))))
- ;; '(fixed-pitch ((t (:family "TeX Gyre Cursor" :height 90))))
- '(fixed-pitch ((t (:family "Fira Code" :height 90))))
- ;; '(org-table ((t (:inherit fixed-pitch))))
+ '(variable-pitch ((t (:family "Century Schoolbook" :height 100 :slant normal))))
+ '(fixed-pitch ((t (:family "CMU Typewriter Text" :height 90))))
+ '(org-table ((t (:inherit fixed-pitch))))
  '(org-block ((t (:inherit variable-pitch :slant italic))))
- ;; '(org-block ((t (:inherit fixed-pitch))))
  '(org-code ((t (:inherit variable-pitch :slant italic))))
- ;; '(org-code ((t (:inherit fixed-pitch))))
  '(org-level-1 ((t (:inherit variable-pitch :height 1.5))))
  '(org-level-2 ((t (:inherit variable-pitch :height 1.3))))
  '(org-level-3 ((t (:inherit variable-pitch :slant italic :height 1.2))))
- ;; org-verbatim
- ;; now, will it create a problem everywhere else?
- ;; '(italic ((t (:inherit variable-pitch :slant italic))))
- 
  )
 
+;; :foundry "outline" 
+ ;; (custom-theme-set-faces
+ ;;   'user
+ ;;   '(org-block ((t (:inherit fixed-pitch))))
+ ;;   '(org-code ((t (:inherit (shadow fixed-pitch)))))
+ ;;   '(org-document-info ((t (:foreground "dark orange"))))
+ ;;   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+ ;;   '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+ ;;   '(org-link ((t (:foreground "royal blue" :underline t))))
+ ;;   '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ ;;   '(org-property-value ((t (:inherit fixed-pitch))) t)
+ ;;   '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ ;;   '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
+ ;;   '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+ ;;   '(org-verbatim ((t (:inherit (shadow fixed-pitch))))))
+
+
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(fixed-pitch ((t (:family "Fira Code" :height 80))))
+;;  '(org-block ((t (:slant italic))))
+;;  '(org-code ((t (:slant italic))))
+;;  '(org-table ((t (:inherit fixed-pitch))))
+;;  '(variable-pitch ((t (:family "Calibri" :height 100 :slant normal)))))
+
+ 
+
+;; * Other/automatic
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -520,17 +531,17 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(outshine eldoc-stan company-stan stan-mode ess-view-data ess-view ess-smart-equals ess-r-insert-obj ess-R-data-view ess smooth-scrolling smart-mode-line)))
+   '(auctex multiple-cursors pdf-tools cmake-ide magit cmake-mode vertico treemacs smooth-scrolling smart-mode-line-powerline-theme outshine org-modern org-download orderless olivetti mindre-theme marginalia helm-org helm-bibtex ess-view-data ess-view ess-smart-equals ess-r-insert-obj ess-R-data-view embark eldoc-stan company-stan citar)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(fixed-pitch ((t (:family "TeX Gyre Cursor" :height 90))))
+ '(fixed-pitch ((t (:family "CMU Typewriter Text" :height 90))))
  '(org-block ((t (:inherit variable-pitch :slant italic))))
  '(org-code ((t (:inherit variable-pitch :slant italic))))
  '(org-level-1 ((t (:inherit variable-pitch :height 1.5))))
  '(org-level-2 ((t (:inherit variable-pitch :height 1.3))))
  '(org-level-3 ((t (:inherit variable-pitch :slant italic :height 1.2))))
  '(org-table ((t (:inherit fixed-pitch))))
- '(variable-pitch ((t (:family "TeX Gyre Pagella" :height 100 :slant normal)))))
+ '(variable-pitch ((t (:family "Century Schoolbook" :height 100 :slant normal)))))
