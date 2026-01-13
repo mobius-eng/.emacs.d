@@ -23,6 +23,9 @@
 
 ;; * Main vanila Emacs settings
 
+;; ** Prevent Warnings to pop up
+(setq warning-minimum-level :error)
+
 ;; ** Stop writing custom-set-variables to this file
 (setq custom-file (expand-file-name "~/.emacs.d/custom-vars.el"))
 
