@@ -112,10 +112,10 @@
 (defun org-insert-image-from-clipboard ()
   (interactive)
   (let* ((the-dir (file-name-directory buffer-file-name))
-     (attachments-dir (file-name-as-directory (concat the-dir "media")))
+     (attachments-dir (file-name-as-directory (concat the-dir ".media")))
      (png-file-name (format-time-string "%a%d%b%Y_%H%M%S.png"))
      (full-png-path (concat attachments-dir png-file-name))
-     (rel-png-path (concat (file-name-as-directory "media") png-file-name))
+     (rel-png-path (concat (file-name-as-directory ".media") png-file-name))
      (script-path (concat (expand-file-name (file-name-as-directory user-emacs-directory)) "imgrab.py")))
     (if (not (file-exists-p attachments-dir))
         (make-directory attachments-dir)) 
@@ -189,13 +189,22 @@
   )
 
 ;; ** BibTeX and BibLaTeX management
-(use-package ebib)
+(use-package ebib
+  :custom
+  (ebib-file-search-dirs '("~/org/04-lt/01-bib/"))
+  (ebib-file-associations '(("pdf" . "xdg-open")))
+  )
 ;; TODO: configure
 
 ;; ** citar -- insert citation
 (use-package citar
   :custom
-  (citar-bibliography '("~/OneDrive/Documents/Zotero-files/lib.bib")))
+  (citar-bibliography '("~/org/04-lt/01-bib/01-main.bib"))
+  (citar-notes-paths '("~/org/04-lt/03-ann/"))
+  ;; I don't think this is necessary...
+  ;; :hook
+  ;; (org-mode . citar-capf-setup)
+  )
 
 ;; ** citeproc -- process CSL citations
 ;; I suspect org uses it internally
@@ -377,16 +386,17 @@
      "#+LATEX_CLASS: article" n
      "#+AUTHOR: Alexey V. Cherkaev" n
      (format "#+BIBLIOGRAPHY: %s" lit-path) n
-     (format
-      "#+CITE_EXPORT: csl %s/ieee.csl"
-      lit-path) n
+     ;; (format
+     ;;  "#+CITE_EXPORT: csl %s/ieee.csl"
+     ;;  lit-path) n
+     "#+CITE_EXPORT: csl ~/.emacs.d/ieee.csl" n
      )
    "<t"
    "Insert a typical header"
    'org-tempo-tags)
   (tempo-define-template
    "r-plot"
-   '("#+begin_src R :results graphics file :file media/file.png :exports both" n
+   '("#+begin_src R :results graphics file :file .media/file.png :exports both" n
      "" n p
      "" n
      "#+end_src" n
@@ -405,7 +415,7 @@
    "Insert R for table output"
    'org-tempo-tags)
   ;; LaTeX export settings
-  (setq org-preview-latex-image-directory "media/")
+  (setq org-preview-latex-image-directory ".media/")
   (let ((default-directory "~/.emacs.d/"))
     (setq alexey-org-latex-preambule-memoir
           (get-string-from-file (expand-file-name "org-memoir.tex")))
@@ -431,7 +441,10 @@
   (setq org-latex-listings 'minted)
   (setq org-latex-pdf-process
         ;; -output-directory=%o/pdf
-        '("latexmk -shell-escape -f -pdf -%latex -interaction=nonstopmode -output-directory=pdf/%o %f"))
+        '("latexmk -shell-escape -f -pdf -%latex -interaction=nonstopmode -output-directory=.build/ %f"
+          "mkdir -p .pdf"
+          "cp .build/%b.pdf .pdf/%b.pdf"
+          "mv %b.tex .build/%b.tex"))
   ;; Custom link (unused)
   (org-link-set-parameters
    "myfile"
@@ -457,31 +470,32 @@
 ;; ** pdf-tools -- better PDF viewer
 
 (use-package pdf-tools
-   :defer t
-   :config
-       (pdf-tools-install)
-       (setq-default pdf-view-display-size 'fit-page)
-   :bind (:map pdf-view-mode-map
-         ("\\" . hydra-pdftools/body)
-         ("<s-spc>" .  pdf-view-scroll-down-or-next-page)
-         ("g"  . pdf-view-first-page)
-         ("G"  . pdf-view-last-page)
-         ("l"  . image-forward-hscroll)
-         ("h"  . image-backward-hscroll)
-         ("j"  . pdf-view-next-page)
-         ("k"  . pdf-view-previous-page)
-         ("e"  . pdf-view-goto-page)
-         ("u"  . pdf-view-revert-buffer)
-         ("al" . pdf-annot-list-annotations)
-         ("ad" . pdf-annot-delete)
-         ("aa" . pdf-annot-attachment-dired)
-         ("am" . pdf-annot-add-markup-annotation)
-         ("at" . pdf-annot-add-text-annotation)
-         ("y"  . pdf-view-kill-ring-save)
-         ("i"  . pdf-misc-display-metadata)
-         ("s"  . pdf-occur)
-         ("b"  . pdf-view-set-slice-from-bounding-box)
-         ("r"  . pdf-view-reset-slice)))
+  ;; :defer t
+  :demand t
+  :config
+  (pdf-tools-install)
+  (setq-default pdf-view-display-size 'fit-page)
+  :bind (:map pdf-view-mode-map
+              ("\\" . hydra-pdftools/body)
+              ("<s-spc>" .  pdf-view-scroll-down-or-next-page)
+              ("g"  . pdf-view-first-page)
+              ("G"  . pdf-view-last-page)
+              ("l"  . image-forward-hscroll)
+              ("h"  . image-backward-hscroll)
+              ("j"  . pdf-view-next-page)
+              ("k"  . pdf-view-previous-page)
+              ("e"  . pdf-view-goto-page)
+              ("u"  . pdf-view-revert-buffer)
+              ("al" . pdf-annot-list-annotations)
+              ("ad" . pdf-annot-delete)
+              ("aa" . pdf-annot-attachment-dired)
+              ("am" . pdf-annot-add-markup-annotation)
+              ("at" . pdf-annot-add-text-annotation)
+              ("y"  . pdf-view-kill-ring-save)
+              ("i"  . pdf-misc-display-metadata)
+              ("s"  . pdf-occur)
+              ("b"  . pdf-view-set-slice-from-bounding-box)
+              ("r"  . pdf-view-reset-slice)))
 
 ;; unavailable?
 ;; (use-package org-pdfview
