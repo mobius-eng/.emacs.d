@@ -511,6 +511,14 @@
 ;;                                  (org-pdfview-open link)))))
 
 
+;; ** auctex
+(use-package auctex
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-master nil))
+
+
 ;; * Custom theme settings (for variable pitch font)
 ;; "Calibri"
 (custom-theme-set-faces
