@@ -516,7 +516,19 @@
   :custom
   (TeX-auto-save t)
   (TeX-parse-self t)
-  (TeX-master nil))
+  (TeX-master nil)
+  ;; avoid GS >=10 problem with pdf2dsc
+  ;; for previews. Use
+  ;; tex -> dvi -> svg pipeline
+  ;; however, this seems to be broken
+  ;; on Debian with no fix...
+  ;; (TeX-PDF-mode t)
+  ;; (preview-LaTeX-command "latex")
+  ;; (preview-image-type 'dvisvgm)
+  ;; workaround: use pdf -> png
+  ;; avoids GS problem and Debian's incompatibility
+  (preview-image-type 'png)
+  (preview-scale-function 1.2))
 
 
 ;; * Custom theme settings (for variable pitch font)
