@@ -195,10 +195,100 @@
   )
 
 ;; ** BibTeX and BibLaTeX management
+
+(defun my/ebib-create-file-path (key db)
+  "Get file from the entry. May be fragile"
+  (let ((files (ebib-get-field-value "file" key db 'noerror 'unbraced 'xref)))
+    (if files
+        (format "%s" (ebib--select-file files nil key))
+      "")))
+
+
+(defun bibtex-authors->short-string (authors)
+  "Convert BibTeX-formatted AUTHORS string to a short author string.
+
+Rules:
+- One author  -> \"Last\"
+- Two authors -> \"Last1 and Last2\"
+- >2 authors  -> \"Last1 et al.\"
+- Malformed input -> empty string"
+  (condition-case nil
+      (let* ((author-list (split-string authors "\\s-+and\\s-+" t))
+             (n (length author-list)))
+        (when (> n 0)
+          (let ((last-names
+                 (mapcar (lambda (a)
+                           ;; Expect \"Last, First\"
+                           (let ((parts (split-string a ",")))
+                             (when (= (length parts) 2)
+                               (string-trim (car parts)))))
+                         author-list)))
+            ;; If any author failed to parse, return empty string
+            (when (cl-every #'stringp last-names)
+              (cond
+               ((= n 1)
+                (nth 0 last-names))
+               ((= n 2)
+                (format "%s and %s"
+                        (nth 0 last-names)
+                        (nth 1 last-names)))
+               ((> n 2)
+                (format "%s et al."
+                        (nth 0 last-names))))))))
+    (error "")))
+
+
+
+
+
+(defun my/ebib-create-author (key db)
+  (let ((author (or
+                 (ebib-get-field-value "author" key db 'noerror 'unbraced 'xref 'expand-strings 'org)
+                 (ebib-get-field-value "editor" key db "(No Author)" 'unbraced 'xref 'expand-strings 'org))))
+    (if author (bibtex-authors->short-string author) "")))
+
+(defun my/ebib-create-year (key db)
+  (let ((year (ebib-get-year-for-display key db)))
+    (if year year "")))
+
+(defun my/ebib-create-key (key db) key)
+
+
+(defun my/ebib-create-keywords (key db)
+  (let ((keywords (ebib-get-field-value "keywords" key db "" 'unbraced 'xref 'expand-strings 'org)))
+    (if keywords keywords "")))
+
+;; (defun ebib-create-org-description (key db)
+;;   "Return a description for an Org mode note for KEY in DB.
+;; The title is formed from the author(s) or editor(s) of the entry,
+;; its year and its title."
+;;   (let ((author (or (ebib-get-field-value "author" key db 'noerror 'unbraced 'xref 'expand-strings 'org)
+;;                     (ebib-get-field-value "editor" key db "(No Author)" 'unbraced 'xref 'expand-strings 'org)))
+;;         (year (ebib-get-year-for-display key db))
+;;         (title (ebib-get-field-value "title" key db "(No Title)" 'unbraced 'xref 'expand-strings 'org)))
+;;     (format "%s (%s): %s" author year title)))
+
 (use-package ebib
+  :config
+  ;; basic file path, not a full org file link
+  ;; %P
+  (add-to-list 'ebib-notes-template-specifiers '(80 . my/ebib-create-file-path))
+  ;; %A
+  (add-to-list 'ebib-notes-template-specifiers '(65 . my/ebib-create-author))
+  ;; %Y
+  (add-to-list 'ebib-notes-template-specifiers '(89 . my/ebib-create-year))
+  ;; %k
+  (add-to-list 'ebib-notes-template-specifiers '(107 . my/ebib-create-key))
+  ;; %W
+  (add-to-list 'ebib-notes-template-specifiers '(87 . my/ebib-create-keywords))
   :custom
   (ebib-file-search-dirs '("~/org/04-lt/01-bib/"))
   (ebib-file-associations '(("pdf" . "xdg-open")))
+  (ebib-notes-directory "~/org/04-lt/03-ann/")
+  (bibtex-dialect "biblatex")
+  (ebib-use-timestamp t)
+  (ebib-file-associations nil)
+  (ebib-notes-template "#+title: %A (%Y) %X\n\n[[file:%P][File]]\n\n* Summary\n:PROPERTIES:\n:Key: %k\n:Year: %Y\n:Context: \n:Problem: \n:Method: \n:Result: \n:Comment: \n:Keywords: %W\n:END:\n\n* Notes\n:PROPERTIES:\n:NOTER_DOCUMENT: %P\n:END:\n\n%%?\n")
   )
 ;; TODO: configure
 
@@ -210,9 +300,14 @@
   ;; I don't think this is necessary...
   ;; :hook
   ;; (org-mode . citar-capf-setup)
-  )
+  :config
+  ;; new template for the note
+  ;; #+title: is inserted for us
+  ;; but we can try more elaborate entry, not just a title
+  (setf (alist-get 'note citar-templates) "${author editor:%etal} ${date year issued:4} ${title}\n#+PROPERTY: NOTER_DOCUMENT ${file}\n\n[[file:${file}][File]]\n"))
 
-;; ** citeproc -- process CSL citations
+
+;; ** Citeproc -- process CSL citations
 ;; I suspect org uses it internally
 (use-package citeproc)
   
@@ -456,6 +551,8 @@
    "myfile"
    :follow 'my-org-open-file
    :complete 'org-file-complete-link)
+  ;; org-noter
+  (use-package org-noter)
 
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
