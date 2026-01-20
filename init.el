@@ -282,13 +282,17 @@ Rules:
   ;; %W
   (add-to-list 'ebib-notes-template-specifiers '(87 . my/ebib-create-keywords))
   :custom
-  (ebib-file-search-dirs '("~/org/04-lt/01-bib/"))
+  (ebib-bib-search-dirs (list (expand-file-name "~/org/04-lt/01-bib/")))
+  (ebib-file-search-dirs (list (expand-file-name "~/org/04-lt/01-bib/")))
+  (ebib-preload-bib-files '("01-main.bib"))
   (ebib-file-associations '(("pdf" . "xdg-open")))
+  (ebib-filters-default-file "~/org/04-lt/01-bib/a0-ebib-filters")
   (ebib-notes-directory "~/org/04-lt/03-ann/")
+  (ebib-default-directory 'first-bib-dir)
   (bibtex-dialect "biblatex")
   (ebib-use-timestamp t)
   (ebib-file-associations nil)
-  (ebib-notes-template "#+title: %A (%Y) %X\n\n[[file:%P][File]]\n\n* Summary\n:PROPERTIES:\n:Key: %k\n:Year: %Y\n:Context: \n:Problem: \n:Method: \n:Result: \n:Comment: \n:Keywords: %W\n:END:\n\n* Notes\n:PROPERTIES:\n:NOTER_DOCUMENT: %P\n:END:\n\n%%?\n")
+  (ebib-notes-template "#+TITLE: %A (%Y) %X\n#+STARTUP:latexpreview\n#+SETUPFILE:~/.emacs.d/latex_header.org\n#+LATEX_CLASS:article\n#+AUTHOR: Alexey V. Cherkaev\n#+BIBLIOGRAPHY:~/org/04-lt/01-bib/01-main.bib\n#+CITE_EXPORT:csl ~/.emacs.d/ieee.csl\n\n[[file:%P][File]]\n\n* Summary\n:PROPERTIES:\n:Key: %k\n:Year: %Y\n:Context: \n:Problem: \n:Method: \n:Result: \n:Comment: \n:Keywords: %W\n:END:\n\n* Notes\n:PROPERTIES:\n:NOTER_DOCUMENT: %P\n:END:\n\n%%?\n")
   )
 ;; TODO: configure
 
@@ -304,7 +308,34 @@ Rules:
   ;; new template for the note
   ;; #+title: is inserted for us
   ;; but we can try more elaborate entry, not just a title
-  (setf (alist-get 'note citar-templates) "${author editor:%etal} ${date year issued:4} ${title}\n#+PROPERTY: NOTER_DOCUMENT ${file}\n\n[[file:${file}][File]]\n"))
+  (setf (alist-get 'note citar-templates)
+        "${author editor:%etal} (${date year issued:4}) ${title}
+#+STARTUP:latexpreview
+#+SETUPFILE:~/.emacs.d/latex_header.org
+#+LATEX_CLASS:article
+#+AUTHOR: Alexey V. Cherkaev
+#+BIBLIOGRAPHY:~/org/04-lt/01-bib/01-main.bib
+#+CITE_EXPORT:csl ~/.emacs.d/ieee.csl
+
+* Summary
+:PROPERTIES:
+:Key: ${=key=}
+:Year: ${date year}
+:Context: 
+:Problem: 
+:Method: 
+:Result: 
+:Comment: 
+:Keywords: ${keywords tags}
+:PDF: [[file:${file}][File]]
+:END:
+
+* Notes
+:PROPERTIES:
+:NOTER_DOCUMENT: ${file}
+:END:
+
+"))
 
 
 ;; ** Citeproc -- process CSL citations
@@ -436,8 +467,11 @@ Rules:
                 (olivetti-mode 1)
                 (variable-pitch-mode 1)
                 (my/org-remove-italic-underline)
-                (setq org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))
-                ))
+                (setq org-download-image-dir
+                      (if (buffer-file-name)
+                          (concat (file-name-sans-extension (buffer-file-name)) "-img")
+                        ".")
+                )))
   (setq org-log-done 'time)
   (setq org-adapt-indentation nil)
   ;; use fixed-pitch for tables

@@ -1,4 +1,5 @@
 #+LATEX_HEADER: \usepackage{siunitx}
+#+LATEX_HEADER: \usepackage{mathrsfs}
 #+LATEX_HEADER: \sisetup{input-decimal-markers={.}, output-decimal-marker = {\cdotp{}}}
 #+LATEX_HEADER: \renewcommand{\Vec}[1]{\overline{#1}}
 #+LATEX_HEADER: \renewcommand{\vec}[1]{\overset{\,\rightarrow}{#1}}
