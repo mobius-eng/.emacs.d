@@ -268,39 +268,46 @@ Rules:
 ;;         (title (ebib-get-field-value "title" key db "(No Title)" 'unbraced 'xref 'expand-strings 'org)))
 ;;     (format "%s (%s): %s" author year title)))
 
-(use-package ebib
-  :config
-  ;; basic file path, not a full org file link
-  ;; %P
-  (add-to-list 'ebib-notes-template-specifiers '(80 . my/ebib-create-file-path))
-  ;; %A
-  (add-to-list 'ebib-notes-template-specifiers '(65 . my/ebib-create-author))
-  ;; %Y
-  (add-to-list 'ebib-notes-template-specifiers '(89 . my/ebib-create-year))
-  ;; %k
-  (add-to-list 'ebib-notes-template-specifiers '(107 . my/ebib-create-key))
-  ;; %W
-  (add-to-list 'ebib-notes-template-specifiers '(87 . my/ebib-create-keywords))
-  :custom
-  (ebib-bib-search-dirs (list (expand-file-name "~/org/04-lt/01-bib/")))
-  (ebib-file-search-dirs (list (expand-file-name "~/org/04-lt/01-bib/")))
-  (ebib-preload-bib-files '("01-main.bib"))
-  (ebib-file-associations '(("pdf" . "xdg-open")))
-  (ebib-filters-default-file "~/org/04-lt/01-bib/a0-ebib-filters")
-  (ebib-notes-directory "~/org/04-lt/03-ann/")
-  (ebib-default-directory 'first-bib-dir)
-  (bibtex-dialect "biblatex")
-  (ebib-use-timestamp t)
-  (ebib-file-associations nil)
-  (ebib-notes-template "#+TITLE: %A (%Y) %X\n#+STARTUP:latexpreview\n#+SETUPFILE:~/.emacs.d/latex_header.org\n#+LATEX_CLASS:article\n#+AUTHOR: Alexey V. Cherkaev\n#+BIBLIOGRAPHY:~/org/04-lt/01-bib/01-main.bib\n#+CITE_EXPORT:csl ~/.emacs.d/ieee.csl\n\n[[file:%P][File]]\n\n* Summary\n:PROPERTIES:\n:Key: %k\n:Year: %Y\n:Context: \n:Problem: \n:Method: \n:Result: \n:Comment: \n:Keywords: %W\n:END:\n\n* Notes\n:PROPERTIES:\n:NOTER_DOCUMENT: %P\n:END:\n\n%%?\n")
-  )
+;; Tried using it. Functionality is not enough (e.g., no filtering on dependent databases)
+;; Also, cannot create a hierachy of dependent DB. Switched to JabRef.
+;; Hard to maintain ORG template. So, use citar instead
+;; (use-package ebib
+;;   :config
+;;   ;; basic file path, not a full org file link
+;;   ;; %P
+;;   (add-to-list 'ebib-notes-template-specifiers '(80 . my/ebib-create-file-path))
+;;   ;; %A
+;;   (add-to-list 'ebib-notes-template-specifiers '(65 . my/ebib-create-author))
+;;   ;; %Y
+;;   (add-to-list 'ebib-notes-template-specifiers '(89 . my/ebib-create-year))
+;;   ;; %k
+;;   (add-to-list 'ebib-notes-template-specifiers '(107 . my/ebib-create-key))
+;;   ;; %W
+;;   (add-to-list 'ebib-notes-template-specifiers '(87 . my/ebib-create-keywords))
+;;   :custom
+;;   (ebib-bib-search-dirs (list (expand-file-name "~/org/04-lt/01-bib/")))
+;;   (ebib-file-search-dirs (list (expand-file-name "~/org/04-lt/01-bib/")))
+;;   (ebib-preload-bib-files '("01-main.bib"))
+;;   (ebib-file-associations '(("pdf" . "xdg-open")))
+;;   (ebib-filters-default-file "~/org/04-lt/01-bib/a0-ebib-filters")
+;;   (ebib-notes-directory "~/org/04-lt/03-ann/")
+;;   (ebib-default-directory 'first-bib-dir)
+;;   (bibtex-dialect "biblatex")
+;;   (ebib-use-timestamp t)
+;;   (ebib-file-associations nil)
+;;   (ebib-notes-template "#+TITLE: %A (%Y) %X\n#+STARTUP:latexpreview\n#+SETUPFILE:~/.emacs.d/latex_header.org\n#+LATEX_CLASS:article\n#+AUTHOR: Alexey V. Cherkaev\n#+BIBLIOGRAPHY:~/org/04-lt/01-bib/01-main.bib\n#+CITE_EXPORT:csl ~/.emacs.d/ieee.csl\n\n[[file:%P][File]]\n\n* Summary\n:PROPERTIES:\n:Key: %k\n:Year: %Y\n:Context: \n:Problem: \n:Method: \n:Result: \n:Comment: \n:Keywords: %W\n:END:\n\n* Notes\n:PROPERTIES:\n:NOTER_DOCUMENT: %P\n:END:\n\n%%?\n")
+;;   )
+
 ;; TODO: configure
 
 ;; ** citar -- insert citation
+
+(setq my-org-dir (expand-file-name "~/org"))
+
 (use-package citar
   :custom
-  (citar-bibliography '("~/org/04-lt/01-bib/01-main.bib"))
-  (citar-notes-paths '("~/org/04-lt/03-ann/"))
+  (citar-bibliography (list (file-name-concat my-org-dir "04-lt" "lib.bib")))
+  (citar-notes-paths (list (file-name-concat my-org-dir "04-lt" "03-ann")))
   ;; I don't think this is necessary...
   ;; :hook
   ;; (org-mode . citar-capf-setup)
@@ -310,12 +317,12 @@ Rules:
   ;; but we can try more elaborate entry, not just a title
   (setf (alist-get 'note citar-templates)
         "${author editor:%etal} (${date year issued:4}) ${title}
-#+STARTUP:latexpreview
-#+SETUPFILE:~/.emacs.d/latex_header.org
-#+LATEX_CLASS:article
 #+AUTHOR: Alexey V. Cherkaev
-#+BIBLIOGRAPHY:~/org/04-lt/01-bib/01-main.bib
-#+CITE_EXPORT:csl ~/.emacs.d/ieee.csl
+#+STARTUP: latexpreview
+#+SETUPFILE: ~/.emacs.d/latex_header.org
+#+LATEX_CLASS: article
+#+BIBLIOGRAPHY: ../lib.bib
+#+CITE_EXPORT: csl ~/.emacs.d/ieee.csl
 
 * Summary
 :PROPERTIES:
@@ -327,12 +334,12 @@ Rules:
 :Result: 
 :Comment: 
 :Keywords: ${keywords tags}
-:PDF: [[file:${file}][File]]
+:PDF: [[file:../${file}][File]]
 :END:
 
 * Notes
 :PROPERTIES:
-:NOTER_DOCUMENT: ${file}
+:NOTER_DOCUMENT: ../${file}
 :END:
 
 "))
@@ -515,12 +522,13 @@ Rules:
    "org-header"
    ;; note: figure height and width set for PNG, for SVG use 3 and 5
    '("#+TITLE: " n p
+     "#+AUTHOR: Alexey V. Cherkaev" n
      "#+STARTUP: latexpreview" n
      "#+SETUPFILE: ~/.emacs.d/latex_header.org" n
      "#+PROPERTY: header-args :colnames yes :height 300 :width 500 :session *R*" n
      "#+LATEX_CLASS: article" n
-     "#+AUTHOR: Alexey V. Cherkaev" n
-     (format "#+BIBLIOGRAPHY: %s" lit-path) n
+     (format "#+BIBLIOGRAPHY: %s" (file-relative-name lit-path (file-name-directory (buffer-file-name)))) n
+     ;; (format "#+BIBLIOGRAPHY: %s" lit-path) n
      ;; (format
      ;;  "#+CITE_EXPORT: csl %s/ieee.csl"
      ;;  lit-path) n
