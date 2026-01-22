@@ -23,11 +23,27 @@
 
 ;; * Main vanila Emacs settings
 
+;; ** Load specific paths to emacs
+
+(defun my/get-string-from-file-or (file-path &optional alt-string)
+  "Load string from a file if it exists or alternative string"
+  (if (file-exists-p file-path)
+      (get-string-from-file file-path)
+    alt-string))
+
+;; location of my org notes
+(setq my-org-dir
+      (expand-file-name
+       (my/get-string-from-file-or
+        (file-name-concat user-emacs-directory "my-org-dir")
+        "~/org")))
+
 ;; ** Prevent Warnings to pop up
 (setq warning-minimum-level :error)
 
 ;; ** Stop writing custom-set-variables to this file
-(setq custom-file (expand-file-name "~/.emacs.d/custom-vars.el"))
+(setq custom-file (expand-file-name (file-name-concat user-emacs-directory
+                                                      "custom-vars.el")))
 
 ;; ** Keys bindings
 (global-set-key (kbd "C-c <left>") 'windmove-left)
@@ -302,8 +318,6 @@ Rules:
 
 ;; ** citar -- insert citation
 
-(setq my-org-dir (expand-file-name "~/org"))
-
 (use-package citar
   :custom
   (citar-bibliography (list (file-name-concat my-org-dir "04-lt" "lib.bib")))
@@ -564,7 +578,7 @@ Rules:
    'org-tempo-tags)
   ;; LaTeX export settings
   (setq org-preview-latex-image-directory ".media/")
-  (let ((default-directory "~/.emacs.d/"))
+  (let ((default-directory user-emacs-directory))
     (setq alexey-org-latex-preambule-memoir
           (get-string-from-file (expand-file-name "org-memoir.tex")))
     (setq alexey-org-latex-preambule-article
@@ -682,7 +696,7 @@ Rules:
 ;; "Calibri"
 (custom-theme-set-faces
  'user
- '(variable-pitch ((t (:family "TeX Gyre Schola" :height 100 :slant normal))))
+ '(variable-pitch ((t (:family "TeX Gyre Schola" :height 120 :slant normal))))
  ;; '(variable-pitch ((t (:family "DejaVu Sans" :height 100 :slant normal))))
  ;; '(fixed-pitch ((t (:family "TeX Gyre Cursor" :height 90))))
  '(fixed-pitch ((t (:family "Fira Code" :height 90))))
