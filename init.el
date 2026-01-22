@@ -335,6 +335,7 @@ Rules:
 :Comment: 
 :Keywords: ${keywords tags}
 :PDF: [[file:../${file}][File]]
+:COLUMNS: %Key %Context %Problem %Method %Result %Comment
 :END:
 
 * Notes
@@ -477,8 +478,12 @@ Rules:
                 (setq org-download-image-dir
                       (if (buffer-file-name)
                           (concat (file-name-sans-extension (buffer-file-name)) "-img")
-                        ".")
-                )))
+                        "."))))
+  ;; better scaling for LaTeX fragments
+  (plist-put org-format-latex-options :scale 1.5)
+  ;; Agenda files (but need to update it somehow once in a while...)
+  (setq org-agenda-files
+      (directory-files-recursively (expand-file-name "~/org") "^[a-zA-Z0-9].*\\.org$"))
   (setq org-log-done 'time)
   (setq org-adapt-indentation nil)
   ;; use fixed-pitch for tables
@@ -523,7 +528,7 @@ Rules:
    ;; note: figure height and width set for PNG, for SVG use 3 and 5
    '("#+TITLE: " n p
      "#+AUTHOR: Alexey V. Cherkaev" n
-     "#+STARTUP: latexpreview" n
+     "#+STARTUP: latexpreview num" n
      "#+SETUPFILE: ~/.emacs.d/latex_header.org" n
      "#+PROPERTY: header-args :colnames yes :height 300 :width 500 :session *R*" n
      "#+LATEX_CLASS: article" n
@@ -594,7 +599,10 @@ Rules:
    :follow 'my-org-open-file
    :complete 'org-file-complete-link)
   ;; org-noter
-  (use-package org-noter)
+  (use-package org-noter
+    :config
+    ;; Highlight quotes in PDF
+    (setq org-noter-highlight-selected-text t))
 
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
