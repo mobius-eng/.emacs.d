@@ -24,4 +24,4 @@ eln-cache/*
 .cache/*
 transient/*
 custom-vars.el
-my-org-dir
+local-settings.el

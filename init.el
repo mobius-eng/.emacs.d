@@ -25,18 +25,25 @@
 
 ;; ** Load specific paths to emacs
 
-(defun my/get-string-from-file-or (file-path &optional alt-string)
-  "Load string from a file if it exists or alternative string"
-  (if (file-exists-p file-path)
-      (get-string-from-file file-path)
-    alt-string))
+;; (defun my/get-string-from-file-or (file-path &optional alt-string)
+;;   "Load string from a file if it exists or alternative string"
+;;   (if (file-exists-p file-path)
+;;       (get-string-from-file file-path)
+;;     alt-string))
 
-;; location of my org notes
-(setq my-org-dir
-      (expand-file-name
-       (my/get-string-from-file-or
-        (file-name-concat user-emacs-directory "my-org-dir")
-        "~/org")))
+;; ;; location of my org notes
+;; (setq my-org-dir
+;;       (expand-file-name
+;;        (my/get-string-from-file-or
+;;         (file-name-concat user-emacs-directory "my-org-dir")
+;;         "~/org")))
+
+;; this file must set:
+;; - `my-org-dir` variable to the absolute path of org notes directory
+;; - `my-variable-pitch-height` to 100 -- 120 depending on screen resolution
+(load (expand-file-name (file-name-concat user-emacs-directory "local-settings")))
+
+
 
 ;; ** Prevent Warnings to pop up
 (setq warning-minimum-level :error)
@@ -694,9 +701,11 @@ Rules:
 
 ;; * Custom theme settings (for variable pitch font)
 ;; "Calibri"
+;; variable pitch height depends on screen resolution
+;; so, make this value separate for each branch
 (custom-theme-set-faces
  'user
- '(variable-pitch ((t (:family "TeX Gyre Schola" :height 120 :slant normal))))
+ `(variable-pitch ((t (:family "TeX Gyre Schola" :height ,my-variable-pitch-height :slant normal))))
  ;; '(variable-pitch ((t (:family "DejaVu Sans" :height 100 :slant normal))))
  ;; '(fixed-pitch ((t (:family "TeX Gyre Cursor" :height 90))))
  '(fixed-pitch ((t (:family "Fira Code" :height 90))))
