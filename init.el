@@ -339,11 +339,12 @@ Rules:
   (setf (alist-get 'note citar-templates)
         "${author editor:%etal} (${date year issued:4}) ${title}
 #+AUTHOR: Alexey V. Cherkaev
-#+STARTUP: latexpreview
+#+STARTUP: latexpreview num
 #+SETUPFILE: ~/.emacs.d/latex_header.org
 #+LATEX_CLASS: article
 #+BIBLIOGRAPHY: ../lib.bib
 #+CITE_EXPORT: csl ~/.emacs.d/ieee.csl
+
 
 * Summary
 :PROPERTIES:
@@ -359,10 +360,14 @@ Rules:
 :COLUMNS: %Key %Context %Problem %Method %Result %Comment
 :END:
 
+
+
 * Notes
 :PROPERTIES:
 :NOTER_DOCUMENT: ../${file}
 :END:
+
+* References
 
 "))
 
@@ -507,6 +512,8 @@ Rules:
       (directory-files-recursively (expand-file-name "~/org") "^[a-zA-Z0-9].*\\.org$"))
   (setq org-log-done 'time)
   (setq org-adapt-indentation nil)
+  ;; always use relative path
+  (setq org-link-file-path-type 'relative)
   ;; use fixed-pitch for tables
   ;; it is set now in custom-theme-set-faces
   ;; (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
