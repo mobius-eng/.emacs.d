@@ -325,6 +325,21 @@ Rules:
 
 ;; ** citar -- insert citation
 
+(defun my/citar-keywords-to-tags (keywords)
+  "Transform BibTeX KEYWORDS into space-separated Org tags."
+  (when (and keywords (stringp keywords))
+    ;; (message "Keywords detected: %s\n" keywords)
+    (let ((result (mapconcat
+                   (lambda (k)
+                     (replace-regexp-in-string
+                      "[[:space:]]+" "-"
+                      k))
+                   (split-string keywords ",")
+                   ":")))
+      ;; (message "Produced: %s\n" result)
+      result)))
+
+
 (use-package citar
   :custom
   (citar-bibliography (list (file-name-concat my-org-dir "04-lt" "lib.bib")))
@@ -345,8 +360,12 @@ Rules:
 #+BIBLIOGRAPHY: ../lib.bib
 #+CITE_EXPORT: csl ~/.emacs.d/ieee.csl
 
+* Notes
+:PROPERTIES:
+:NOTER_DOCUMENT: ../${file}
+:END:
 
-* Summary
+** Summary     :literature:${keywords:%tag}:
 :PROPERTIES:
 :Key: ${=key=}
 :Year: ${date year}
@@ -355,22 +374,19 @@ Rules:
 :Method: 
 :Result: 
 :Comment: 
-:Keywords: ${keywords tags}
 :PDF: [[file:../${file}][File]]
 :COLUMNS: %Key %Context %Problem %Method %Result %Comment
 :END:
 
 
-
-* Notes
-:PROPERTIES:
-:NOTER_DOCUMENT: ../${file}
-:END:
-
 * References
 
-"))
+")
+  (add-to-list
+   'citar-display-transform-functions
+   '(tag  my/citar-keywords-to-tags)))
 
+;; :Keywords: ${keywords tags}
 
 ;; ** Citeproc -- process CSL citations
 ;; I suspect org uses it internally
@@ -483,6 +499,50 @@ Rules:
    '(:slant italic :underline nil))
   )
 
+;; (defun my/org-babel-export-latex-to-latex-block (orig-fun &rest args)
+;;   "Convert EXPORT latex blocks inserted by Babel into LATEX blocks."
+;;   (let ((result (apply orig-fun args)))
+;;     (message "I am trying converting block %s\n" (if (org-in-block-p '("export")) "yes" "no"))
+;;     (save-excursion
+;;       ;; org-in-block-p is already case-insensitive
+;;       (when (org-in-block-p '("export"))
+;;         (org-beginning-of-block)
+;;         (when (looking-at
+;;                "^[ \t]*#\\+begin_export[ \t]+latex[ \t]*$")
+;;           (replace-match "#+BEGIN_LATEX"))
+;;         (org-end-of-block)
+;;         (when (looking-at
+;;                "^[ \t]*#\\+end_export[ \t]*$")
+;;           (replace-match "#+END_LATEX"))))
+;;     result))
+
+(defun my/org-babel-export-latex-to-latex-block (orig-fun &rest args)
+  "Rewrite EXPORT latex result blocks as LATEX blocks for preview."
+  (let ((result (apply orig-fun args)))
+    (save-excursion
+      ;; org-babel inserts or updates a #+RESULTS: line
+      (when (org-babel-where-is-src-block-result)
+        (goto-char (org-babel-where-is-src-block-result))
+        (forward-line 1)
+        ;; Now look for a BEGIN_EXPORT latex block
+        (let ((case-fold-search t))
+          (when (looking-at "[ \t]*#\\+begin_export[ \t]+latex")
+            (replace-match "#+BEGIN_LATEX")
+            ;; find matching end
+            (when (re-search-forward
+                   "^[ \t]*#\\+end_export[ \t]*$" nil t)
+              (replace-match "#+END_LATEX"))))))
+    result))
+
+
+(defun my/org-refresh-agenda-files ()
+  "Refresh agenda files if new files were added"
+  (interactive)
+  (message "Updating agenda file list")
+  (setq org-agenda-files
+        (directory-files-recursively
+         my-org-dir
+         "^[a-zA-Z0-9].*\\.org$")))
 
 
 (use-package org
@@ -529,10 +589,13 @@ Rules:
   ;; (add-to-list 'org-babel-default-header-args:R
   ;;            '((:width . 640) (:height . 640)))
   (setq org-babel-R-command "R --slave --no-save")
+  (advice-add 'org-babel-insert-result
+              :around #'my/org-babel-export-latex-to-latex-block)
   (use-package org-modern
     :config
     (setq org-modern-star
-          '("◈" " ◉" "  ○" "   ◇" "    ✳")))
+          '("◈" " ◉" "  ○" "   ◇" "    ✳"))
+    (setq org-modern-table nil))
   ;; new functionality for citations
   (use-package helm-org)
   (require 'oc)
@@ -634,6 +697,7 @@ Rules:
 
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
+         ("C-c r" . my/org-refresh-agenda-files)
          ("C-c b" . org-iswitchb)
          ("C-c p" . org-insert-image-from-clipboard)
          ("C-c i" . citar-insert-citation)
@@ -716,7 +780,9 @@ Rules:
  ;; '(variable-pitch ((t (:family "DejaVu Sans" :height 100 :slant normal))))
  ;; '(fixed-pitch ((t (:family "TeX Gyre Cursor" :height 90))))
  '(fixed-pitch ((t (:family "Fira Code" :height 90))))
- ;; '(org-table ((t (:inherit fixed-pitch))))
+ ;;  '(fixed-pitch ((t (:family "Fira Code" :height 90))))
+ '(org-table ((t (:inherit fixed-pitch :foregorund "gray50"))))
+ '(org-table-border ((t (:inherit fixed-pitch :foregorund "gray50"))))
  '(org-block ((t (:inherit variable-pitch :slant italic))))
  ;; '(org-block ((t (:inherit fixed-pitch))))
  '(org-code ((t (:inherit variable-pitch :slant italic))))
